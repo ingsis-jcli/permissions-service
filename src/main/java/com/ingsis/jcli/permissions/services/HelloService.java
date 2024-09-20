@@ -24,4 +24,8 @@ public class HelloService {
   public String getHelloFromPrintScript() {
     return printScriptClient.hello();
   }
+
+  public String getHello() {
+    return "Hello from permissions service!";
+  }
 }
