@@ -44,7 +44,7 @@ class HelloServiceTest {
   }
 
   @Test
-  void testGetHelloFromPermissions() {
+  void testGetHelloFromSnippets() {
     when(snippetsClient.hello()).thenReturn("Hello from snippets service!");
     String result = helloService.getHelloFromSnippets();
     assertEquals("Hello from snippets service!", result);
