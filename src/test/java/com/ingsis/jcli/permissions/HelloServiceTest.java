@@ -1,5 +1,9 @@
 package com.ingsis.jcli.permissions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ingsis.jcli.permissions.clients.PrintScriptClient;
 import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.services.HelloService;
@@ -9,20 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 class HelloServiceTest {
 
-  @Mock
-  private PrintScriptClient printScriptClient;
+  @Mock private PrintScriptClient printScriptClient;
 
-  @Mock
-  private SnippetsClient snippetsClient;
+  @Mock private SnippetsClient snippetsClient;
 
-  @InjectMocks
-  private HelloService helloService;
+  @InjectMocks private HelloService helloService;
 
   @BeforeEach
   void setUp() {
