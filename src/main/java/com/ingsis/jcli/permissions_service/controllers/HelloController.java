@@ -7,18 +7,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("snippets/")
-public class SnippetsController {
+@RequestMapping("hello")
+public class HelloController {
 
   private final HelloService helloService;
 
   @Autowired
-  public SnippetsController(HelloService helloService) {
+  public HelloController(HelloService helloService) {
     this.helloService = helloService;
   }
 
-  @GetMapping("hello")
+  @GetMapping("/snippets")
+  public String helloSnippets() {
+    return helloService.getHelloFromSnippets();
+  }
+
+  @GetMapping("/printscript")
+  public String helloPrintScript() {
+    return helloService.getHelloFromPrintScript();
+  }
+
+  @GetMapping
   public String hello() {
-    return helloService.getHello();
+    return "Hello from permissions service!";
   }
 }
