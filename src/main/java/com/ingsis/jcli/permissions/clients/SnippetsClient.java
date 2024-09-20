@@ -1,11 +1,11 @@
-package com.ingsis.jcli.permissions_service.clients;
+package com.ingsis.jcli.permissions.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(value = "printscript", url = "http://localhost:8082/")
-public interface PrintScriptClient {
+@FeignClient(value = "snippets", url = "http://localhost:8080/")
+public interface SnippetsClient {
 
   @RequestMapping(method = RequestMethod.GET, value = "/hello")
   String hello();

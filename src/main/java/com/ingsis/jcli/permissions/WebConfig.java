@@ -1,4 +1,4 @@
-package com.ingsis.jcli.permissions_service;
+package com.ingsis.jcli.permissions;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

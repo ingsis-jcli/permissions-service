@@ -1,6 +1,6 @@
-package com.ingsis.jcli.permissions_service.controllers;
+package com.ingsis.jcli.permissions.controllers;
 
-import com.ingsis.jcli.permissions_service.services.HelloService;
+import com.ingsis.jcli.permissions.services.HelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,7 @@
-package com.ingsis.jcli.permissions_service.services;
+package com.ingsis.jcli.permissions.services;
 
-import com.ingsis.jcli.permissions_service.clients.PrintScriptClient;
-import com.ingsis.jcli.permissions_service.clients.SnippetsClient;
+import com.ingsis.jcli.permissions.clients.PrintScriptClient;
+import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
