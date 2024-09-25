@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ingsis.jcli.permissions.controllers.HelloController;
 import com.ingsis.jcli.permissions.services.HelloService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(HelloController.class)
 class HelloControllerTest {
+
+  @BeforeAll
+  static void setup() {
+    PermissionsServiceApplication.loadEnv();
+  }
 
   @Autowired private MockMvc mockMvc;
 

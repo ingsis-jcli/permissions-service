@@ -13,7 +13,7 @@ public class PermissionsServiceApplication {
     SpringApplication.run(PermissionsServiceApplication.class, args);
   }
 
-  private static void loadEnv() {
+  public static void loadEnv() {
     Dotenv dotenv = Dotenv.load();
     System.setProperty("POSTGRES_USER", dotenv.get("POSTGRES_USER"));
     System.setProperty("POSTGRES_PASSWORD", dotenv.get("POSTGRES_PASSWORD"));
