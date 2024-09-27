@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.ingsis.jcli.permissions.clients.PrintScriptClient;
 import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.services.HelloService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,6 +15,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class HelloServiceTest {
+
+  @BeforeAll
+  static void setup() {
+    PermissionsServiceApplication.loadEnv();
+  }
 
   @Mock private PrintScriptClient printScriptClient;
 
