@@ -10,21 +10,23 @@ import com.ingsis.jcli.permissions.services.HelloService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(HelloController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class HelloControllerTest {
 
-  @BeforeAll
-  static void setup() {
-    PermissionsServiceApplication.loadEnv();
-  }
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Autowired private MockMvc mockMvc;
-
-  @MockBean private HelloService helloService;
+  @MockBean
+  private HelloService helloService;
 
   @Test
   void testGetHello() throws Exception {

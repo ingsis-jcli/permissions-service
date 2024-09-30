@@ -7,30 +7,24 @@ import static org.mockito.Mockito.when;
 import com.ingsis.jcli.permissions.clients.PrintScriptClient;
 import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.services.HelloService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class HelloServiceTest {
 
-  @BeforeAll
-  static void setup() {
-    PermissionsServiceApplication.loadEnv();
-  }
+  @Autowired
+  private HelloService helloService;
 
-  @Mock private PrintScriptClient printScriptClient;
+  @MockBean
+  private PrintScriptClient printScriptClient;
 
-  @Mock private SnippetsClient snippetsClient;
-
-  @InjectMocks private HelloService helloService;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
+  @MockBean
+  private SnippetsClient snippetsClient;
 
   @Test
   void testGetHello() {
