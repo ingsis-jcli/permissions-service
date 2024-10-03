@@ -30,4 +30,4 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/ingsis-jcli/permissions-dev:latest
+            ghcr.io/ingsis-jcli/permissions:latest
