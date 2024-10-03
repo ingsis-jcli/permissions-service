@@ -5,7 +5,7 @@ services:
     container_name: "permissions-api"
     build:
       context: .
-      dockerfile: Dockerfile.multi
+      dockerfile: Dockerfile
     ports:
       - 8081:8080
     environment:
