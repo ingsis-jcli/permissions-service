@@ -49,6 +49,7 @@ dependencyManagement {  // for openfeign
 
 tasks.named('test') {
 	useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 //Checkstyle set up
@@ -98,3 +99,4 @@ spotless {
         ktlint()
     }
 }
+
