@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 jobs:
   push_to_registry:
     name: Push Docker image to GitHub Packages
