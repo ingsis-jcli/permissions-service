@@ -14,17 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-
-
 @SpringBootTest
 @ActiveProfiles("test")
 class PermissionServiceTest {
 
-  @Autowired
-  private PermissionService permissionService;
+  @Autowired private PermissionService permissionService;
 
-  @MockBean
-  private PermissionRepository permissionRepository;
+  @MockBean private PermissionRepository permissionRepository;
 
   @Test
   void hasPermission() {

@@ -16,7 +16,8 @@ public class PermissionService {
   }
 
   public boolean hasPermission(Long userId, Long snippetId, PermissionType type) {
-    return permissionRepository.findByUserIdAndSnippetIdAndType(userId,
-      snippetId, type).isPresent();
+    return permissionRepository
+        .findByUserIdAndSnippetIdAndType(userId, snippetId, type)
+        .isPresent();
   }
 }

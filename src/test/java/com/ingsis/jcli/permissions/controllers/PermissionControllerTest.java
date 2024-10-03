@@ -16,20 +16,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class PermissionControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @MockBean
-  private PermissionService permissionService;
+  @MockBean private PermissionService permissionService;
 
   private static final String path = "/permissions";
-
 
   @Test
   void hasPermissionOk() throws Exception {
@@ -37,15 +33,16 @@ class PermissionControllerTest {
     Long snippetId = 1L;
     String type = PermissionType.READ.name();
 
-    when(permissionService.hasPermission(userId, snippetId, PermissionType.READ))
-        .thenReturn(true);
+    when(permissionService.hasPermission(userId, snippetId, PermissionType.READ)).thenReturn(true);
 
-    mockMvc.perform(get(path)
-        .param("type", type)
-        .param("snippetId", snippetId.toString())
-        .param("userId", userId.toString())
-        .contentType(MediaType.APPLICATION_JSON))
-      .andExpect(status().isOk())
+    mockMvc
+        .perform(
+            get(path)
+                .param("type", type)
+                .param("snippetId", snippetId.toString())
+                .param("userId", userId.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$").value(true));
   }
 
@@ -55,15 +52,16 @@ class PermissionControllerTest {
     Long snippetId = 1L;
     String type = PermissionType.READ.name();
 
-    when(permissionService.hasPermission(userId, snippetId, PermissionType.READ))
-        .thenReturn(false);
+    when(permissionService.hasPermission(userId, snippetId, PermissionType.READ)).thenReturn(false);
 
-    mockMvc.perform(get(path)
-        .param("type", type)
-        .param("snippetId", snippetId.toString())
-        .param("userId", userId.toString())
-        .contentType(MediaType.APPLICATION_JSON))
-      .andExpect(status().isOk())
+    mockMvc
+        .perform(
+            get(path)
+                .param("type", type)
+                .param("snippetId", snippetId.toString())
+                .param("userId", userId.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$").value(false));
   }
 }

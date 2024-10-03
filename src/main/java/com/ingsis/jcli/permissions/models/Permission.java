@@ -1,5 +1,6 @@
 package com.ingsis.jcli.permissions.models;
 
+import com.ingsis.jcli.permissions.Generated;
 import com.ingsis.jcli.permissions.common.PermissionType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,12 +13,15 @@ import lombok.Data;
 
 @Entity
 @Data
+@Generated
 public class Permission {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permission_sequence")
-  @SequenceGenerator(name = "permission_sequence", sequenceName =
-      "permission_sequence", allocationSize = 1)
+  @SequenceGenerator(
+      name = "permission_sequence",
+      sequenceName = "permission_sequence",
+      allocationSize = 1)
   private Long id;
 
   private Long userId;

@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
+@Generated
 public class PermissionsServiceApplication {
   public static void main(String[] args) {
     loadEnv();

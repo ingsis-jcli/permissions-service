@@ -17,14 +17,11 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class HelloServiceTest {
 
-  @Autowired
-  private HelloService helloService;
+  @Autowired private HelloService helloService;
 
-  @MockBean
-  private PrintScriptClient printScriptClient;
+  @MockBean private PrintScriptClient printScriptClient;
 
-  @MockBean
-  private SnippetsClient snippetsClient;
+  @MockBean private SnippetsClient snippetsClient;
 
   @Test
   void testGetHello() {
