@@ -15,7 +15,7 @@ public class PermissionsServiceApplication {
   }
 
   public static void loadEnv() {
-    Dotenv dotenv = Dotenv.configure().directory("./").load();
+    Dotenv dotenv = Dotenv.configure().load();
     System.setProperty("POSTGRES_USER", dotenv.get("POSTGRES_USER"));
     System.setProperty("POSTGRES_PASSWORD", dotenv.get("POSTGRES_PASSWORD"));
     System.setProperty("POSTGRES_DB", dotenv.get("POSTGRES_DB"));
