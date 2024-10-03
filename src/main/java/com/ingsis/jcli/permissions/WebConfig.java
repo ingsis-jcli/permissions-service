@@ -16,4 +16,5 @@ public class WebConfig implements WebMvcConfigurer {
         .allowedOrigins("*") // Allow all origins
         .allowedMethods("GET", "POST");
   }
+
 }
