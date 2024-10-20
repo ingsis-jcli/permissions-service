@@ -13,6 +13,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +26,8 @@ class PermissionControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private PermissionService permissionService;
+
+  @MockBean private JwtDecoder jwtDecoder;
 
   private static final String path = "/permissions";
 
@@ -41,7 +45,10 @@ class PermissionControllerTest {
                 .param("type", type)
                 .param("snippetId", snippetId.toString())
                 .param("userId", userId.toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt(jwt -> jwt.claim("scope", "read:snippets"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").value(true));
   }
@@ -60,7 +67,10 @@ class PermissionControllerTest {
                 .param("type", type)
                 .param("snippetId", snippetId.toString())
                 .param("userId", userId.toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .jwt(jwt -> jwt.claim("scope", "read:snippets"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").value(false));
   }
