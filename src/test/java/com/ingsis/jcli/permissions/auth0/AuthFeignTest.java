@@ -1,5 +1,7 @@
 package com.ingsis.jcli.permissions.auth0;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuthFeignTest {
 

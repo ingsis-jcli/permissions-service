@@ -17,9 +17,9 @@ public class AuthFeignInterceptor implements RequestInterceptor {
     final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
     if (requestAttributes != null) {
       final HttpServletRequest httpServletRequest =
-        ((ServletRequestAttributes) requestAttributes).getRequest();
+          ((ServletRequestAttributes) requestAttributes).getRequest();
       template.header(
-        HttpHeaders.AUTHORIZATION, httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION));
+          HttpHeaders.AUTHORIZATION, httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION));
     }
   }
 }
