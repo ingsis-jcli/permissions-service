@@ -1,10 +1,9 @@
 package com.ingsis.jcli.permissions.services;
 
 import com.ingsis.jcli.permissions.common.PermissionType;
-import com.ingsis.jcli.permissions.models.Snippet;
-import com.ingsis.jcli.permissions.models.User;
-import com.ingsis.jcli.permissions.repository.SnippetRepository;
-import com.ingsis.jcli.permissions.repository.UserRepository;
+import com.ingsis.jcli.permissions.models.SnippetPermissions;
+import com.ingsis.jcli.permissions.repository.SnippetPermissionsRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,36 +11,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class PermissionService {
 
-  private final UserRepository userRepository;
-  private final SnippetRepository snippetRepository;
+  private final SnippetPermissionsRepository snippetPermissionsRepository;
 
   @Autowired
-  public PermissionService(UserRepository userRepository, SnippetRepository snippetRepository) {
-    this.userRepository = userRepository;
-    this.snippetRepository = snippetRepository;
+  public PermissionService(SnippetPermissionsRepository snippetRepository) {
+    this.snippetPermissionsRepository = snippetRepository;
   }
 
-  public boolean hasPermission(Long userId, Long snippetId, PermissionType type) {
-    Optional<User> userOpt = userRepository.findById(userId);
-    if (userOpt.isEmpty()) {
+  public boolean hasPermission(String userId, Long snippetId, PermissionType type) {
+    Optional<SnippetPermissions> snippetPermissionsOpt =
+        snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId);
+    if (snippetPermissionsOpt.isEmpty()) {
       return false;
     }
-    User user = userOpt.get();
+    SnippetPermissions snippetPermissions = snippetPermissionsOpt.get();
 
-    Optional<Snippet> snippetOpt = snippetRepository.findById(snippetId);
-    if (snippetOpt.isEmpty()) {
-      return false;
-    }
-    Snippet snippet = snippetOpt.get();
-
-    if (user.getSnippetPermissions().containsKey(snippet)) {
-      return user.getSnippetPermissions().get(snippet).equals(type);
-    }
-
-    if (snippet.getUserPermissions().containsKey(user)) {
-      return snippet.getUserPermissions().get(user).equals(type);
-    }
-
-    return false;
+    List<PermissionType> permissionTypeList = snippetPermissions.getPermissions();
+    return permissionTypeList.contains(type);
   }
 }
