@@ -1,7 +1,7 @@
 package com.ingsis.jcli.permissions.controllers;
 
-import com.ingsis.jcli.permissions.services.FriendService;
 import com.ingsis.jcli.permissions.services.JwtService;
+import com.ingsis.jcli.permissions.services.UserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,36 +14,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("friends")
+@RequestMapping("users")
 public class UserController {
 
-  private final FriendService friendService;
+  private final UserService userService;
   private final JwtService jwtService;
 
   @Autowired
-  public UserController(FriendService friendService, JwtService jwtService) {
-    this.friendService = friendService;
+  public UserController(UserService userService, JwtService jwtService) {
+    this.userService = userService;
     this.jwtService = jwtService;
   }
 
-  @GetMapping
-  public ResponseEntity<List<String>> getFriends(@RequestHeader("Authorization") String token) {
-    String userId = jwtService.extractUserId(token);
-    List<String> friendIds = friendService.getFriends(userId);
-    return ResponseEntity.ok(friendIds);
-  }
-
   @PostMapping
-  public ResponseEntity<Void> addFriend(
-      @RequestParam("friendId") String friendId, @RequestHeader("Authorization") String token) {
+  public ResponseEntity<Void> saveUser(@RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
-
-    if (friendService.areFriends(userId, friendId)) {
+    String email = jwtService.extractEmail(token); // TODO: add email
+    if (userService.userExists(userId)) {
       return ResponseEntity.ok().build();
     }
-
-    friendService.addFriend(userId, friendId);
-
+    userService.saveUser(userId, email);
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @GetMapping("emails")
+  public ResponseEntity<List<String>> getEmails(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestHeader("Authorization") String token) {
+
+    String userId = jwtService.extractUserId(token);
+    if (!userService.userExists(userId)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    List<String> emails = userService.getEmails(userId, page, pageSize);
+    return ResponseEntity.ok(emails);
   }
 }
