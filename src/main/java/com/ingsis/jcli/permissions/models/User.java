@@ -7,7 +7,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,10 +17,12 @@ import lombok.Setter;
 @Entity
 @Setter
 @NoArgsConstructor
-@Table(name = "friends")
+@Table(name = "users")
 public class User {
 
   @Id @Getter private String userId;
+
+  @Getter private String email;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
@@ -30,13 +31,9 @@ public class User {
       inverseJoinColumns = @JoinColumn(name = "friend_id"))
   private Set<User> friends = new HashSet<>();
 
-  public User(String userId) {
+  public User(String userId, String email) {
     this.userId = userId;
-  }
-
-  public User(String userId, Collection<User> friends) {
-    this.userId = userId;
-    this.friends.addAll(friends);
+    this.email = email;
   }
 
   public void addFriend(User friend) {

@@ -24,4 +24,9 @@ public class JwtService {
     Jwt jwt = extractJwt(authHeader);
     return jwt.getSubject().substring(6);
   }
+
+  public String extractEmail(String authHeader) {
+    Jwt jwt = extractJwt(authHeader);
+    return "-"; // jwt.getClaims().get("email").toString(); // TODO
+  }
 }
