@@ -37,10 +37,10 @@ public class PermissionServiceTest {
   @Test
   void testHasPermission() {
     SnippetPermissions snippetPermissions =
-        new SnippetPermissions(userId, snippetId, List.of(PermissionType.READ));
+        new SnippetPermissions(userId, snippetId, List.of(PermissionType.SHARED));
     when(snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId))
         .thenReturn(Optional.of(snippetPermissions));
-    boolean hasPermission = permissionService.hasPermission(userId, snippetId, PermissionType.READ);
+    boolean hasPermission = permissionService.hasPermission(userId, snippetId, PermissionType.SHARED);
     assertThat(hasPermission).isTrue();
   }
 
@@ -48,18 +48,18 @@ public class PermissionServiceTest {
   void testNoPermission() {
     when(snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId))
         .thenReturn(Optional.empty());
-    boolean hasPermission = permissionService.hasPermission(userId, snippetId, PermissionType.READ);
+    boolean hasPermission = permissionService.hasPermission(userId, snippetId, PermissionType.SHARED);
     assertThat(hasPermission).isFalse();
   }
 
   @Test
   void testNoProperPermission() {
     SnippetPermissions snippetPermissions =
-        new SnippetPermissions(userId, snippetId, List.of(PermissionType.READ));
+        new SnippetPermissions(userId, snippetId, List.of(PermissionType.SHARED));
     when(snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId))
         .thenReturn(Optional.of(snippetPermissions));
     boolean hasPermission =
-        permissionService.hasPermission(userId, snippetId, PermissionType.WRITE);
+        permissionService.hasPermission(userId, snippetId, PermissionType.OWNER);
     assertThat(hasPermission).isFalse();
   }
 }

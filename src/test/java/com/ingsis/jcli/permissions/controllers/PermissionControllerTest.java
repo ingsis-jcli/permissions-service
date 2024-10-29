@@ -51,13 +51,13 @@ class PermissionControllerTest {
   void hasPermissionOk() throws Exception {
     String userId = "1";
     Long snippetId = 1L;
-    String type = PermissionType.READ.name();
+    String type = PermissionType.SHARED.name();
 
     Jwt mockJwt = createMockJwt(userId);
 
     when(jwtService.extractUserId(anyString())).thenReturn(userId);
     when(jwtDecoder.decode(anyString())).thenReturn(mockJwt);
-    when(permissionService.hasPermission(userId, snippetId, PermissionType.READ)).thenReturn(true);
+    when(permissionService.hasPermission(userId, snippetId, PermissionType.SHARED)).thenReturn(true);
 
     mockMvc
         .perform(
@@ -75,12 +75,12 @@ class PermissionControllerTest {
   void hasPermissionDenied() throws Exception {
     String userId = "1";
     Long snippetId = 1L;
-    String type = PermissionType.READ.name();
+    String type = PermissionType.SHARED.name();
 
     Jwt mockJwt = createMockJwt(userId);
     when(jwtService.extractUserId(anyString())).thenReturn(userId);
     when(jwtDecoder.decode(anyString())).thenReturn(mockJwt);
-    when(permissionService.hasPermission(userId, snippetId, PermissionType.READ)).thenReturn(false);
+    when(permissionService.hasPermission(userId, snippetId, PermissionType.SHARED)).thenReturn(false);
 
     mockMvc
         .perform(

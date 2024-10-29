@@ -33,7 +33,7 @@ class SnippetPermissionsTest {
   void testSnippetPermissionsConstructorAndGetters() {
     Long snippetId = 1L;
     String userId = "user1";
-    List<PermissionType> permissions = List.of(PermissionType.READ, PermissionType.WRITE);
+    List<PermissionType> permissions = List.of(PermissionType.OWNER);
 
     SnippetPermissionsId id = new SnippetPermissionsId(snippetId, userId);
     SnippetPermissions snippetPermissions = new SnippetPermissions(userId, snippetId, permissions);
@@ -48,11 +48,11 @@ class SnippetPermissionsTest {
   void testSnippetPermissionsEqualsAndHashCode() {
     Long snippetId1 = 1L;
     String userId1 = "user1";
-    List<PermissionType> permissions1 = List.of(PermissionType.READ, PermissionType.WRITE);
+    List<PermissionType> permissions1 = List.of(PermissionType.SHARED);
 
     Long snippetId2 = 2L;
     String userId2 = "user2";
-    List<PermissionType> permissions2 = List.of(PermissionType.READ);
+    List<PermissionType> permissions2 = List.of(PermissionType.SHARED);
 
     SnippetPermissions snippetPermissions1 =
         new SnippetPermissions(userId1, snippetId1, permissions1);
