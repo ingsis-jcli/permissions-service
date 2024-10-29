@@ -26,8 +26,7 @@ class SnippetPermissionsRepositoryTest {
   @BeforeEach
   void setUp() {
     snippetPermissionsId = new SnippetPermissionsId(1L, "user123");
-    snippetPermissions =
-        new SnippetPermissions("user123", 1L, List.of(PermissionType.SHARED));
+    snippetPermissions = new SnippetPermissions("user123", 1L, List.of(PermissionType.SHARED));
   }
 
   @Test

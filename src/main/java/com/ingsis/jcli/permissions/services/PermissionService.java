@@ -29,9 +29,9 @@ public class PermissionService {
     List<PermissionType> permissionTypeList = snippetPermissions.getPermissions();
     return permissionTypeList.contains(type);
   }
-  
+
   public List<Long> getSnippetsSharedWithUser(String userId) {
-    return snippetPermissionsRepository
-        .findSnippetIdsByUserIdAndPermissionType(userId, PermissionType.SHARED);
+    return snippetPermissionsRepository.findSnippetIdsByUserIdAndPermissionType(
+        userId, PermissionType.SHARED);
   }
 }

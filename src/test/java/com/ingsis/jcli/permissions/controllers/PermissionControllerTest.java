@@ -57,7 +57,8 @@ class PermissionControllerTest {
 
     when(jwtService.extractUserId(anyString())).thenReturn(userId);
     when(jwtDecoder.decode(anyString())).thenReturn(mockJwt);
-    when(permissionService.hasPermission(userId, snippetId, PermissionType.SHARED)).thenReturn(true);
+    when(permissionService.hasPermission(userId, snippetId, PermissionType.SHARED))
+        .thenReturn(true);
 
     mockMvc
         .perform(
@@ -80,7 +81,8 @@ class PermissionControllerTest {
     Jwt mockJwt = createMockJwt(userId);
     when(jwtService.extractUserId(anyString())).thenReturn(userId);
     when(jwtDecoder.decode(anyString())).thenReturn(mockJwt);
-    when(permissionService.hasPermission(userId, snippetId, PermissionType.SHARED)).thenReturn(false);
+    when(permissionService.hasPermission(userId, snippetId, PermissionType.SHARED))
+        .thenReturn(false);
 
     mockMvc
         .perform(

@@ -40,7 +40,8 @@ public class PermissionServiceTest {
         new SnippetPermissions(userId, snippetId, List.of(PermissionType.SHARED));
     when(snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId))
         .thenReturn(Optional.of(snippetPermissions));
-    boolean hasPermission = permissionService.hasPermission(userId, snippetId, PermissionType.SHARED);
+    boolean hasPermission =
+        permissionService.hasPermission(userId, snippetId, PermissionType.SHARED);
     assertThat(hasPermission).isTrue();
   }
 
@@ -48,7 +49,8 @@ public class PermissionServiceTest {
   void testNoPermission() {
     when(snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId))
         .thenReturn(Optional.empty());
-    boolean hasPermission = permissionService.hasPermission(userId, snippetId, PermissionType.SHARED);
+    boolean hasPermission =
+        permissionService.hasPermission(userId, snippetId, PermissionType.SHARED);
     assertThat(hasPermission).isFalse();
   }
 
