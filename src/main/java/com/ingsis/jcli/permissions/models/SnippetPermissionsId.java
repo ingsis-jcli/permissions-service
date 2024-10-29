@@ -3,11 +3,9 @@ package com.ingsis.jcli.permissions.models;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Embeddable
 @Data
-@EqualsAndHashCode
 public class SnippetPermissionsId implements Serializable {
   private Long snippetId;
   private String userId;
