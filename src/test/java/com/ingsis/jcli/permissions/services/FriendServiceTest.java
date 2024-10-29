@@ -1,6 +1,9 @@
 package com.ingsis.jcli.permissions.services;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ingsis.jcli.permissions.models.User;
@@ -55,5 +58,109 @@ public class FriendServiceTest {
     when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
     assertThat(friendService.getFriends(userId)).containsExactlyInAnyOrderElementsOf(List.of());
+  }
+
+  @Test
+  public void addFriend() {
+    String userId = "userId";
+    String friendId = "friendId";
+
+    User user = new User(userId);
+    User friend = new User(friendId);
+
+    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
+
+    friendService.addFriend(userId, friendId);
+
+    verify(userRepository, times(1)).save(user);
+    verify(userRepository, times(1)).save(friend);
+
+    assertTrue(user.getFriends().contains(friend));
+    assertTrue(friend.getFriends().contains(user));
+  }
+
+  @Test
+  public void addFriendAlreadyFriends() {
+    String userId = "userId";
+    String friendId = "friendId";
+
+    User user = new User(userId);
+    User friend = new User(friendId);
+
+    user.addFriend(friend);
+    friend.addFriend(user);
+
+    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
+
+    friendService.addFriend(userId, friendId);
+
+    verify(userRepository, times(1)).save(user);
+    verify(userRepository, times(1)).save(friend);
+
+    assertTrue(user.getFriends().contains(friend));
+    assertTrue(friend.getFriends().contains(user));
+  }
+
+  @Test
+  public void addFriendUserNotFound() {
+    String userId = "userId";
+    String friendId = "friendId";
+
+    User user = new User(userId);
+    User friend = new User(friendId);
+
+    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
+    when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
+
+    friendService.addFriend(userId, friendId);
+
+    verify(userRepository, times(1)).save(user);
+    verify(userRepository, times(1)).save(friend);
+
+    // assertTrue(user.getFriends().contains(friend));
+    assertTrue(friend.getFriends().contains(user));
+  }
+
+  @Test
+  public void addFriendFriendNotFound() {
+    String userId = "userId";
+    String friendId = "friendId";
+
+    User user = new User(userId);
+    User friend = new User(friendId);
+
+    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
+    when(userRepository.findByUserId(friendId)).thenReturn(Optional.empty());
+
+    friendService.addFriend(userId, friendId);
+
+    verify(userRepository, times(1)).save(user);
+    verify(userRepository, times(1)).save(friend);
+
+    assertTrue(user.getFriends().contains(friend));
+    // assertTrue(friend.getFriends().contains(user));
+  }
+
+  @Test
+  public void addFriendNeitherFound() {
+    String userId = "userId";
+    String friendId = "friendId";
+
+    User user = new User(userId);
+    User friend = new User(friendId);
+
+    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
+    when(userRepository.findByUserId(friendId)).thenReturn(Optional.empty());
+
+    friendService.addFriend(userId, friendId);
+
+    verify(userRepository, times(1)).save(user);
+    verify(userRepository, times(1)).save(friend);
+
+    // TODO: check
+    // assertTrue(user.getFriends().contains(friend));
+    // assertTrue(friend.getFriends().contains(user));
   }
 }

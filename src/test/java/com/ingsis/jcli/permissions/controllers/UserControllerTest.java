@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,5 +93,31 @@ public class UserControllerTest {
     List<String> friendIds = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
 
     assertThat(friendIds).containsExactlyInAnyOrderElementsOf(friends);
+  }
+
+  @Test
+  public void addFriend() throws Exception {
+    String friendId = "friendId";
+    String userId = "userId";
+    setupJwt(userId);
+
+    when(friendService.areFriends(userId, friendId)).thenReturn(false);
+
+    mockMvc
+        .perform(post(path).param("friendId", friendId).header("Authorization", token))
+        .andExpect(status().isCreated());
+  }
+
+  @Test
+  public void addFriendExisting() throws Exception {
+    String friendId = "friendId";
+    String userId = "userId";
+    setupJwt(userId);
+
+    when(friendService.areFriends(userId, friendId)).thenReturn(true);
+
+    mockMvc
+        .perform(post(path).param("friendId", friendId).header("Authorization", token))
+        .andExpect(status().isOk());
   }
 }
