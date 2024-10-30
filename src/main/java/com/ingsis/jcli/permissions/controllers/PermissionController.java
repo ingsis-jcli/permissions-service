@@ -52,11 +52,10 @@ public class PermissionController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Void> grantOwnerPermission(
-      @RequestParam Long snippetId, @RequestHeader("Authorization") String token) {
-
+  public ResponseEntity<Void> grantOwnerPermission(@RequestParam Long snippetId, @RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
     permissionService.grantOwnerPermission(snippetId, userId);
+    System.out.println("Permission granted");
     return ResponseEntity.ok().build();
   }
 
