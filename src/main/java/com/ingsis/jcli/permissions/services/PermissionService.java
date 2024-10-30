@@ -24,6 +24,12 @@ public class PermissionService {
     this.userService = userService;
   }
 
+  public void grantOwnerPermission(Long snippetId, String userId) {
+    userService.getUserById(userId).orElseThrow();
+    List<PermissionType> permission = List.of(PermissionType.OWNER);
+    snippetPermissionsRepository.save(new SnippetPermissions(userId, snippetId, permission));
+  }
+
   public boolean hasPermission(String userId, Long snippetId, PermissionType type) {
     Optional<SnippetPermissions> snippetPermissionsOpt =
         snippetPermissionsRepository.findByIdSnippetIdAndIdUserId(snippetId, userId);

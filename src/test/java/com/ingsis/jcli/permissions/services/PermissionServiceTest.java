@@ -129,4 +129,29 @@ public class PermissionServiceTest {
         NoSuchElementException.class,
         () -> permissionService.shareWithUser(userId, friendEmail, snippetId));
   }
+
+  @Test
+  public void grantOwnerPermissionSuccess() {
+    Long snippetId = 1L;
+    User user = new User(userId, email);
+
+    when(userService.getUserById(userId)).thenReturn(Optional.of(user));
+    permissionService.grantOwnerPermission(snippetId, userId);
+
+    verify(snippetPermissionsRepository, times(1))
+        .save(new SnippetPermissions(userId, snippetId, List.of(PermissionType.OWNER)));
+  }
+
+  @Test
+  public void grantOwnerPermissionUserNotFound() {
+    Long snippetId = 1L;
+
+    when(userService.getUserById(userId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        NoSuchElementException.class,
+        () -> {
+          permissionService.grantOwnerPermission(snippetId, userId);
+        });
+  }
 }

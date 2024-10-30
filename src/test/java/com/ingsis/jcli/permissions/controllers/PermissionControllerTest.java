@@ -1,6 +1,7 @@
 package com.ingsis.jcli.permissions.controllers;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -140,5 +141,23 @@ class PermissionControllerTest {
                 .param("friendEmail", friendEmail)
                 .header("Authorization", token))
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  public void grantOwnerPermissionSuccess() throws Exception {
+    Long snippetId = 1L;
+    String userId = "123";
+
+    setupJwt(userId);
+
+    doNothing().when(permissionService).grantOwnerPermission(snippetId, userId);
+
+    mockMvc
+        .perform(
+            post(path + "/create")
+                .param("snippetId", snippetId.toString())
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
   }
 }
