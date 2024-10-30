@@ -29,7 +29,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<Void> saveUser(@RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
-    String email = jwtService.extractEmail(token); // TODO: add email
+    String email = jwtService.extractEmail(token);
     if (userService.userExists(userId)) {
       return ResponseEntity.ok().build();
     }

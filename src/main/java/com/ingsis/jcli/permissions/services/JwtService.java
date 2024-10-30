@@ -14,7 +14,7 @@ public class JwtService {
   public JwtService(JwtDecoder jwtDecoder) {
     this.jwtDecoder = jwtDecoder;
   }
-  
+
   public Jwt extractJwt(String authHeader) {
     String jwt = authHeader.substring(7);
     return jwtDecoder.decode(jwt);
