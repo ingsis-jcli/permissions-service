@@ -14,7 +14,7 @@ public class JwtService {
   public JwtService(JwtDecoder jwtDecoder) {
     this.jwtDecoder = jwtDecoder;
   }
-
+  
   public Jwt extractJwt(String authHeader) {
     String jwt = authHeader.substring(7);
     return jwtDecoder.decode(jwt);
@@ -27,6 +27,6 @@ public class JwtService {
 
   public String extractEmail(String authHeader) {
     Jwt jwt = extractJwt(authHeader);
-    return "-"; // jwt.getClaims().get("email").toString(); // TODO
+    return jwt.getClaim("https://snippets.com/email");
   }
 }
