@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,10 +35,20 @@ public class PermissionController {
     String userId = jwtService.extractUserId(token);
 
     PermissionType permissionType = PermissionType.valueOf(type.toUpperCase());
-
     boolean hasPermission = permissionService.hasPermission(userId, snippetId, permissionType);
 
     return ResponseEntity.ok(hasPermission);
+  }
+
+  @PostMapping()
+  public ResponseEntity<Void> shareWithUser(
+      @RequestParam Long snippetId,
+      @RequestParam String friendEmail,
+      @RequestHeader("Authorization") String token) {
+
+    String userId = jwtService.extractUserId(token);
+    permissionService.shareWithUser(userId, friendEmail, snippetId);
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/user")
