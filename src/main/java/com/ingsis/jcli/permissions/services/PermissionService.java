@@ -25,7 +25,8 @@ public class PermissionService {
   }
 
   public void grantOwnerPermission(Long snippetId, String userId) {
-    userService.getUserById(userId).orElseThrow();
+    // TODO: uncomment for auth0
+    // userService.getUserById(userId).orElseThrow();
     List<PermissionType> permission = List.of(PermissionType.OWNER);
     snippetPermissionsRepository.save(new SnippetPermissions(userId, snippetId, permission));
   }

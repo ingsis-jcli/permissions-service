@@ -142,16 +142,16 @@ public class PermissionServiceTest {
         .save(new SnippetPermissions(userId, snippetId, List.of(PermissionType.OWNER)));
   }
 
-  @Test
-  public void grantOwnerPermissionUserNotFound() {
-    Long snippetId = 1L;
-
-    when(userService.getUserById(userId)).thenReturn(Optional.empty());
-
-    assertThrows(
-        NoSuchElementException.class,
-        () -> {
-          permissionService.grantOwnerPermission(snippetId, userId);
-        });
-  }
+//  @Test
+//  public void grantOwnerPermissionUserNotFound() {
+//    Long snippetId = 1L;
+//
+//    when(userService.getUserById(userId)).thenReturn(Optional.empty());
+//
+//    assertThrows(
+//        NoSuchElementException.class,
+//        () -> {
+//          permissionService.grantOwnerPermission(snippetId, userId);
+//        });
+//  }
 }
