@@ -60,9 +60,8 @@ public class Auth0Client {
     }
   }
 
-  public List<UserDto> getAllUsers(
-      String adminAccessToken, String requestingUserId, int page, int pageSize) {
-    String url = baseUrl + "users?page=" + page + "&per_page=" + pageSize;
+  public List<UserDto> getAllUsers(String adminAccessToken, String requestingUserId) {
+    String url = baseUrl + "users";
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
 
