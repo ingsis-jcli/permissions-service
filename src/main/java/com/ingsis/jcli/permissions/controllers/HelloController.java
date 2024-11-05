@@ -34,9 +34,4 @@ public class HelloController {
   public String hello() {
     return helloService.getHello();
   }
-
-  @GetMapping("/admin-token")
-  public String helloAdmin() {
-    return auth0Service.getAdminAccessToken();
-  }
 }
