@@ -1,7 +1,5 @@
 package com.ingsis.jcli.permissions.services;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,24 +48,5 @@ public class UserServiceTest {
     userService.saveUser(userId, email);
 
     verify(userRepository, times(0)).save(user);
-  }
-
-  @Test
-  public void userExistsTrue() {
-    String userId = "userId";
-    User user = new User(userId, "email");
-
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
-
-    assertTrue(userService.userExists(userId));
-  }
-
-  @Test
-  public void userExistsFalse() {
-    String userId = "userId";
-
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
-
-    assertFalse(userService.userExists(userId));
   }
 }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class Auth0Client {
@@ -97,6 +98,7 @@ public class Auth0Client {
     HttpEntity<Void> entity = new HttpEntity<>(headers);
 
     try {
+      System.out.println("Encoded URL: " + url);
       ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 
       if (response.getBody() != null && response.getBody().containsKey("email")) {
@@ -104,6 +106,9 @@ public class Auth0Client {
       } else {
         return Optional.empty();
       }
+    } catch (HttpClientErrorException.NotFound e) {
+      System.err.println("User not found: " + userId);
+      return Optional.empty();
     } catch (Exception e) {
       throw new RuntimeException("Failed to get user email from Auth0", e);
     }

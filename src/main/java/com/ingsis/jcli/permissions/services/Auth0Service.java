@@ -33,4 +33,9 @@ public class Auth0Service {
     String adminAccessToken = getAdminAccessToken();
     return auth0Client.getUserEmail(adminAccessToken, userId);
   }
+
+  public boolean userExists(String userId) {
+    String adminAccessToken = getAdminAccessToken();
+    return auth0Client.getUserEmail(adminAccessToken, userId).isPresent();
+  }
 }

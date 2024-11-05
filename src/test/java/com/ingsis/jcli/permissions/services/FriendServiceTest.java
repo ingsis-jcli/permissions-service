@@ -28,6 +28,7 @@ public class FriendServiceTest {
   @Autowired private FriendService friendService;
 
   @MockBean private UserRepository userRepository;
+  @MockBean private Auth0Service auth0Service;
   @MockBean private JwtDecoder jwtDecoder;
 
   @Test
@@ -77,7 +78,7 @@ public class FriendServiceTest {
     when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
     when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
 
-    friendService.addFriend(userId, friendId);
+    friendService.addFriend(user, friend);
 
     verify(userRepository, times(1)).save(user);
     verify(userRepository, times(1)).save(friend);
@@ -100,49 +101,12 @@ public class FriendServiceTest {
     when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
     when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
 
-    friendService.addFriend(userId, friendId);
+    friendService.addFriend(user, friend);
 
     verify(userRepository, times(1)).save(user);
     verify(userRepository, times(1)).save(friend);
 
     assertTrue(user.getFriends().contains(friend));
     assertTrue(friend.getFriends().contains(user));
-  }
-
-  @Test
-  public void addFriendUserNotFound() {
-    String userId = "userId";
-    String friendId = "friendId";
-
-    User friend = new User(friendId, "");
-
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
-    when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
-
-    assertThrows(NoSuchElementException.class, () -> friendService.addFriend(userId, friendId));
-  }
-
-  @Test
-  public void addFriendFriendNotFound() {
-    String userId = "userId";
-    String friendId = "friendId";
-
-    User user = new User(userId, "");
-
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
-    when(userRepository.findByUserId(friendId)).thenReturn(Optional.empty());
-
-    assertThrows(NoSuchElementException.class, () -> friendService.addFriend(userId, friendId));
-  }
-
-  @Test
-  public void addFriendNeitherFound() {
-    String userId = "userId";
-    String friendId = "friendId";
-
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
-    when(userRepository.findByUserId(friendId)).thenReturn(Optional.empty());
-
-    assertThrows(NoSuchElementException.class, () -> friendService.addFriend(userId, friendId));
   }
 }

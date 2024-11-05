@@ -1,7 +1,9 @@
 package com.ingsis.jcli.permissions.controllers;
 
+import com.ingsis.jcli.permissions.models.User;
 import com.ingsis.jcli.permissions.services.FriendService;
 import com.ingsis.jcli.permissions.services.JwtService;
+import com.ingsis.jcli.permissions.services.UserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,11 +21,14 @@ public class FriendController {
 
   private final FriendService friendService;
   private final JwtService jwtService;
+  private final UserService userService;
 
   @Autowired
-  public FriendController(FriendService friendService, JwtService jwtService) {
+  public FriendController(
+      FriendService friendService, JwtService jwtService, UserService userService) {
     this.friendService = friendService;
     this.jwtService = jwtService;
+    this.userService = userService;
   }
 
   @GetMapping
@@ -42,7 +47,10 @@ public class FriendController {
       return ResponseEntity.ok().build();
     }
 
-    friendService.addFriend(userId, friendId);
+    User user = userService.getUser(userId);
+    User friend = userService.getUser(friendId);
+
+    friendService.addFriend(user, friend);
 
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

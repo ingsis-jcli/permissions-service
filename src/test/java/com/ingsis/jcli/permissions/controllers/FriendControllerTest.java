@@ -10,10 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ingsis.jcli.permissions.services.Auth0Service;
 import com.ingsis.jcli.permissions.services.FriendService;
 import com.ingsis.jcli.permissions.services.JwtService;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,6 +36,7 @@ public class FriendControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private FriendService friendService;
+  @MockBean private Auth0Service auth0Service;
   @MockBean private JwtDecoder jwtDecoder;
   @MockBean private JwtService jwtService;
 
@@ -95,6 +98,8 @@ public class FriendControllerTest {
     setupJwt(userId);
 
     when(friendService.areFriends(userId, friendId)).thenReturn(false);
+    when(auth0Service.getUserEmail(friendId)).thenReturn(Optional.of(email));
+    when(auth0Service.getUserEmail(userId)).thenReturn(Optional.of(email));
 
     mockMvc
         .perform(post(path).param("friendId", friendId).header("Authorization", token))

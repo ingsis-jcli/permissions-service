@@ -31,12 +31,8 @@ public class FriendService {
     return user1.getFriends().contains(user2);
   }
 
-  public void addFriend(String userId, String friendId) {
-    User user = userRepository.findByUserId(userId).orElseThrow();
-    User friend = userRepository.findByUserId(friendId).orElseThrow();
-
+  public void addFriend(User user, User friend) {
     user.addFriend(friend);
-
     userRepository.save(user);
     userRepository.save(friend);
   }
