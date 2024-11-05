@@ -4,13 +4,13 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ingsis.jcli.permissions.dtos.UserDto;
+import com.ingsis.jcli.permissions.services.Auth0Service;
 import com.ingsis.jcli.permissions.services.JwtService;
-import com.ingsis.jcli.permissions.services.UserService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class UserControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private UserService userService;
+  @MockBean private Auth0Service auth0Service;
   @MockBean private JwtDecoder jwtDecoder;
   @MockBean private JwtService jwtService;
 
@@ -56,56 +56,19 @@ public class UserControllerTest {
   }
 
   @Test
-  public void saveNewUser() throws Exception {
+  public void getUsers() throws Exception {
     String userId = "userId";
     setupJwt(userId);
-
-    when(userService.userExists(userId)).thenReturn(false);
-
-    mockMvc.perform(post(path).header("Authorization", token)).andExpect(status().isCreated());
-  }
-
-  @Test
-  public void saveExistingUser() throws Exception {
-    String userId = "userId";
-    setupJwt(userId);
-
-    when(userService.userExists(userId)).thenReturn(true);
-
-    mockMvc.perform(post(path).header("Authorization", token)).andExpect(status().isOk());
-  }
-
-  @Test
-  public void getEmails() throws Exception {
-    String userId = "userId";
-    setupJwt(userId);
-
-    List<String> emails = List.of("user1@example.com", "user2@example.com", "user3@example.com");
-
-    when(userService.userExists(userId)).thenReturn(true);
-    when(userService.getEmails(userId, 0, 10)).thenReturn(emails);
+    when(auth0Service.getAllUsers(userId, 0, 10)).thenReturn(List.of());
 
     MvcResult result =
         mockMvc
-            .perform(get(path + "/emails").header("Authorization", token))
+            .perform(get(path).header("Authorization", token))
             .andExpect(status().isOk())
             .andReturn();
 
-    String jsonResponse = result.getResponse().getContentAsString();
-    List<String> response = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
-
-    assertThat(response).containsExactlyInAnyOrderElementsOf(emails);
-  }
-
-  @Test
-  public void getEmailsUserNotFound() throws Exception {
-    String userId = "userId";
-    setupJwt(userId);
-
-    when(userService.userExists(userId)).thenReturn(false);
-
-    mockMvc
-        .perform(get(path + "/emails").header("Authorization", token))
-        .andExpect(status().isNotFound());
+    List<UserDto> users =
+        objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+    assertThat(users).isEmpty();
   }
 }
