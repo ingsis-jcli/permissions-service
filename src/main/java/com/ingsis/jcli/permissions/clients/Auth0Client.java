@@ -26,7 +26,7 @@ public class Auth0Client {
       String clientSecret,
       String audience) {
     this.restTemplate = restTemplate;
-    this.baseUrl = baseUrl + "api/v2/";
+    this.baseUrl = baseUrl;
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.audience = audience;
@@ -40,10 +40,10 @@ public class Auth0Client {
     headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
 
     MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-    requestBody.add("grant_type", "client_credentials");
     requestBody.add("client_id", clientId);
     requestBody.add("client_secret", clientSecret);
-    requestBody.add("audience", audience);
+    requestBody.add("audience", baseUrl + "api/v2/");
+    requestBody.add("grant_type", "client_credentials");
 
     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
 
@@ -61,7 +61,7 @@ public class Auth0Client {
   }
 
   public List<UserDto> getAllUsers(String adminAccessToken, String requestingUserId) {
-    String url = baseUrl + "users";
+    String url = baseUrl + "api/v2/" + "users";
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
