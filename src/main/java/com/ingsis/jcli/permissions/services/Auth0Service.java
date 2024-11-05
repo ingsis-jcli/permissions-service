@@ -1,6 +1,8 @@
 package com.ingsis.jcli.permissions.services;
 
 import com.ingsis.jcli.permissions.clients.Auth0Client;
+import com.ingsis.jcli.permissions.dtos.UserDto;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,5 +23,10 @@ public class Auth0Service {
 
   public String getAdminAccessToken() {
     return auth0Client.getAccessToken();
+  }
+
+  public List<UserDto> getAllUsers(String requestingUserId) {
+    String adminAccessToken = getAdminAccessToken();
+    return auth0Client.getAllUsers(adminAccessToken, requestingUserId);
   }
 }

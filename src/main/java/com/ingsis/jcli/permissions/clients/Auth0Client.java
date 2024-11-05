@@ -1,5 +1,8 @@
 package com.ingsis.jcli.permissions.clients;
 
+import com.ingsis.jcli.permissions.dtos.UserDto;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +35,6 @@ public class Auth0Client {
   public String getAccessToken() {
     String url = baseUrl + "oauth/token";
 
-    System.out.println("url: " + url);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -54,6 +56,37 @@ public class Auth0Client {
       }
     } catch (Exception e) {
       throw new RuntimeException("Failed to get Auth0 access token", e);
+    }
+  }
+
+  public List<UserDto> getAllUsers(String adminAccessToken, String requestingUserId) {
+    String url = baseUrl + "api/v2/users";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(adminAccessToken);
+
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+    try {
+      ResponseEntity<Map[]> response =
+          restTemplate.exchange(url, HttpMethod.GET, entity, Map[].class);
+
+      if (response.getBody() != null) {
+        List<UserDto> users = new ArrayList<>();
+        for (Map user : response.getBody()) {
+          String userId = (String) user.get("user_id");
+          String email = (String) user.get("email");
+
+          if (!userId.equals(requestingUserId)) {
+            users.add(new UserDto(userId, email));
+          }
+        }
+        return users;
+      } else {
+        throw new RuntimeException("No users found in the response");
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to get users from Auth0", e);
     }
   }
 }

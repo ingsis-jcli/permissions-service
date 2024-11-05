@@ -40,9 +40,4 @@ public class HelloController {
     logger.info("Endpoint /hello/snippets called");
     return helloService.getHello();
   }
-
-  @GetMapping("/admin-token")
-  public String helloAdmin() {
-    return auth0Service.getAdminAccessToken();
-  }
 }

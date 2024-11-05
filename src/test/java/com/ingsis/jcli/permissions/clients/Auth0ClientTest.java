@@ -7,7 +7,9 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.ingsis.jcli.permissions.dtos.UserDto;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,5 +67,56 @@ public class Auth0ClientTest {
         .thenThrow(new RuntimeException("API error"));
 
     assertThrows(RuntimeException.class, () -> auth0Client.getAccessToken());
+  }
+
+  @Test
+  void testGetAllUsers_Success() {
+    String adminAccessToken = "mock-admin-access-token";
+    String requestingUserId = "requesting-user-id";
+
+    Map<String, String> user1 = new HashMap<>();
+    user1.put("user_id", "user-id-1");
+    user1.put("email", "user1@example.com");
+
+    Map<String, String> user2 = new HashMap<>();
+    user2.put("user_id", requestingUserId);
+    user2.put("email", "user2@example.com");
+
+    Map<String, String> user3 = new HashMap<>();
+    user3.put("user_id", "user-id-3");
+    user3.put("email", "user3@example.com");
+
+    Map[] usersArray = new Map[] {user1, user2, user3};
+    ResponseEntity<Map[]> responseEntity = ResponseEntity.ok(usersArray);
+
+    when(restTemplate.exchange(
+            eq(baseUrl + "api/v2/users"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(Map[].class)))
+        .thenReturn(responseEntity);
+
+    List<UserDto> users = auth0Client.getAllUsers(adminAccessToken, requestingUserId);
+
+    assertEquals(2, users.size());
+    assertEquals("user-id-1", users.get(0).getId());
+    assertEquals("user1@example.com", users.get(0).getEmail());
+    assertEquals("user-id-3", users.get(1).getId());
+    assertEquals("user3@example.com", users.get(1).getEmail());
+  }
+
+  @Test
+  void testGetAllUsers_Failure_Exception() {
+    String adminAccessToken = "mock-admin-access-token";
+
+    when(restTemplate.exchange(
+            eq(baseUrl + "api/v2/users"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(Map[].class)))
+        .thenThrow(new RuntimeException("API error"));
+
+    assertThrows(
+        RuntimeException.class, () -> auth0Client.getAllUsers(adminAccessToken, "some-user-id"));
   }
 }
