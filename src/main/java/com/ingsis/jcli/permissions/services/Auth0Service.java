@@ -13,8 +13,8 @@ public class Auth0Service {
   private final Auth0Client auth0Client;
 
   public Auth0Service(
-      @Value("${spring.security.oauth2.resourceserver.jwt.client-id}") String clientId,
-      @Value("${spring.security.oauth2.resourceserver.jwt.client-secret}") String clientSecret,
+      @Value("${auth0.management.client-id}") String clientId,
+      @Value("${auth0.management.client-secret}") String clientSecret,
       @Value("${auth0.audience}") String audience,
       @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String authServerUri) {
     this.auth0Client =
