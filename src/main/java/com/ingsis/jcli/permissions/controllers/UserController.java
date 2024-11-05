@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,14 +25,16 @@ public class UserController {
   }
 
   @GetMapping()
-  public List<UserDto> getUsers(@RequestHeader("Authorization") String token) {
+  public List<UserDto> getUsers(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
-    return auth0Service.getAllUsers(userId);
+    return auth0Service.getAllUsers(userId, page, pageSize);
   }
 
   @GetMapping("/email")
-  public String getUserEmail(@RequestHeader("Authorization") String token) {
-    String userId = jwtService.extractUserId(token);
-    return auth0Service.getUserEmail(userId).orElseThrow();
+  public String getUserEmail(@RequestParam String id) {
+    return auth0Service.getUserEmail(id).orElseThrow();
   }
 }

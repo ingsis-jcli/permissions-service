@@ -59,7 +59,7 @@ public class UserControllerTest {
   public void getUsers() throws Exception {
     String userId = "userId";
     setupJwt(userId);
-    when(auth0Service.getAllUsers(userId)).thenReturn(List.of());
+    when(auth0Service.getAllUsers(userId, 1, 2)).thenReturn(List.of());
 
     MvcResult result =
         mockMvc

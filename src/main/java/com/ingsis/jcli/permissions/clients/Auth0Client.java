@@ -1,6 +1,8 @@
 package com.ingsis.jcli.permissions.clients;
 
 import com.ingsis.jcli.permissions.dtos.UserDto;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +57,9 @@ public class Auth0Client {
     }
   }
 
-  public List<UserDto> getAllUsers(String adminAccessToken, String requestingUserId) {
-    String url = baseUrl + "api/v2/users";
+  public List<UserDto> getAllUsers(
+      String adminAccessToken, String requestingUserId, int page, int pageSize) {
+    String url = baseUrl + "api/v2/users?page=" + page + "&per_page=" + pageSize;
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
 
@@ -86,7 +89,8 @@ public class Auth0Client {
   }
 
   public Optional<String> getUserEmail(String adminAccessToken, String userId) {
-    String url = baseUrl + "api/v2/users/" + userId;
+    String encodedUserId = URLEncoder.encode(userId, StandardCharsets.UTF_8);
+    String url = baseUrl + "api/v2/users/" + encodedUserId;
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
 

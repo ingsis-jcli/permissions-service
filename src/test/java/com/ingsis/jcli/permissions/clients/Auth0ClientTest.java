@@ -96,13 +96,13 @@ public class Auth0ClientTest {
     ResponseEntity<Map[]> responseEntity = ResponseEntity.ok(usersArray);
 
     when(restTemplate.exchange(
-            eq(baseUrl + "api/v2/users"),
+            eq("https://your-tenant-name.auth0.com/api/v2/users?page=1&per_page=2"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(Map[].class)))
         .thenReturn(responseEntity);
 
-    List<UserDto> users = auth0Client.getAllUsers(adminAccessToken, requestingUserId);
+    List<UserDto> users = auth0Client.getAllUsers(adminAccessToken, requestingUserId, 1, 2);
 
     assertEquals(2, users.size());
     assertEquals("user-id-1", users.get(0).getId());
@@ -120,7 +120,8 @@ public class Auth0ClientTest {
         .thenThrow(new RuntimeException("API error"));
 
     assertThrows(
-        RuntimeException.class, () -> auth0Client.getAllUsers(adminAccessToken, "some-user-id"));
+        RuntimeException.class,
+        () -> auth0Client.getAllUsers(adminAccessToken, "some-user-id", 1, 2));
   }
 
   @Test
