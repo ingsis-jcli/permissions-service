@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("hello")
 public class HelloController {
 
-
   private final HelloService helloService;
   private final Auth0Service auth0Service;
 

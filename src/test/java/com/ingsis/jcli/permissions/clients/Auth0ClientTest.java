@@ -40,10 +40,7 @@ public class Auth0ClientTest {
     ResponseEntity<Map> responseEntity = ResponseEntity.ok(responseMap);
 
     when(restTemplate.exchange(
-            eq(baseUrl + "api/v2/oauth/token"),
-            eq(HttpMethod.POST),
-            any(HttpEntity.class),
-            eq(Map.class)))
+            eq(baseUrl + "oauth/token"), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
         .thenReturn(responseEntity);
 
     String accessToken = auth0Client.getAccessToken();
