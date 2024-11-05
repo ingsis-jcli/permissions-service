@@ -90,8 +90,7 @@ public class Auth0Client {
   }
 
   public Optional<String> getUserEmail(String adminAccessToken, String userId) {
-    String encodedUserId = URLEncoder.encode(userId, StandardCharsets.UTF_8);
-    String url = baseUrl + "api/v2/users/" + encodedUserId;
+    String url = baseUrl + "api/v2/users/" + userId;
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
 
