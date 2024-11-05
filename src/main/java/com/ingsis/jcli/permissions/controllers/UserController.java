@@ -28,4 +28,10 @@ public class UserController {
     String userId = jwtService.extractUserId(token);
     return auth0Service.getAllUsers(userId);
   }
+
+  @GetMapping("/email")
+  public String getUserEmail(@RequestHeader("Authorization") String token) {
+    String userId = jwtService.extractUserId(token);
+    return auth0Service.getUserEmail(userId).orElseThrow();
+  }
 }

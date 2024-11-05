@@ -11,6 +11,7 @@ import com.ingsis.jcli.permissions.dtos.UserDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -25,12 +26,11 @@ public class Auth0ClientTest {
   private String baseUrl = "https://your-tenant-name.auth0.com/";
   private String clientId = "your-client-id";
   private String clientSecret = "your-client-secret";
-  private String audience = "your-audience";
 
   @BeforeEach
   void setUp() {
     restTemplate = mock(RestTemplate.class);
-    auth0Client = new Auth0Client(restTemplate, baseUrl, clientId, clientSecret, audience);
+    auth0Client = new Auth0Client(restTemplate, baseUrl, clientId, clientSecret);
   }
 
   @Test
@@ -96,7 +96,7 @@ public class Auth0ClientTest {
     ResponseEntity<Map[]> responseEntity = ResponseEntity.ok(usersArray);
 
     when(restTemplate.exchange(
-            eq("https://your-tenant-name.auth0.com/users"),
+            eq(baseUrl + "api/v2/users"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(Map[].class)))
@@ -121,5 +121,60 @@ public class Auth0ClientTest {
 
     assertThrows(
         RuntimeException.class, () -> auth0Client.getAllUsers(adminAccessToken, "some-user-id"));
+  }
+
+  @Test
+  void testGetUserEmail_Success() {
+    String adminAccessToken = "mock-admin-access-token";
+    String userId = "user-id-1";
+
+    Map<String, String> userMap = new HashMap<>();
+    userMap.put("email", "user1@example.com");
+    ResponseEntity<Map> responseEntity = ResponseEntity.ok(userMap);
+
+    when(restTemplate.exchange(
+            eq(baseUrl + "api/v2/users/" + userId),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(Map.class)))
+        .thenReturn(responseEntity);
+
+    Optional<String> email = auth0Client.getUserEmail(adminAccessToken, userId);
+
+    assertEquals("user1@example.com", email.orElse(null));
+  }
+
+  @Test
+  void testGetUserEmail_NotFound() {
+    String adminAccessToken = "mock-admin-access-token";
+    String userId = "user-id-1";
+
+    ResponseEntity<Map> responseEntity = ResponseEntity.ok(new HashMap<>());
+
+    when(restTemplate.exchange(
+            eq(baseUrl + "api/v2/users/" + userId),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(Map.class)))
+        .thenReturn(responseEntity);
+
+    Optional<String> email = auth0Client.getUserEmail(adminAccessToken, userId);
+
+    assertEquals(Optional.empty(), email);
+  }
+
+  @Test
+  void testGetUserEmail_Failure_Exception() {
+    String adminAccessToken = "mock-admin-access-token";
+    String userId = "user-id-1";
+
+    when(restTemplate.exchange(
+            eq(baseUrl + "api/v2/users/" + userId),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(Map.class)))
+        .thenThrow(new RuntimeException("API error"));
+
+    assertThrows(RuntimeException.class, () -> auth0Client.getUserEmail(adminAccessToken, userId));
   }
 }
