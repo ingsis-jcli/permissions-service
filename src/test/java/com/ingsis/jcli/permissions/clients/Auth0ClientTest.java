@@ -40,7 +40,10 @@ public class Auth0ClientTest {
     ResponseEntity<Map> responseEntity = ResponseEntity.ok(responseMap);
 
     when(restTemplate.exchange(
-            eq(baseUrl + "oauth/token"), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
+            eq(baseUrl + "api/v2/oauth/token"),
+            eq(HttpMethod.POST),
+            any(HttpEntity.class),
+            eq(Map.class)))
         .thenReturn(responseEntity);
 
     String accessToken = auth0Client.getAccessToken();
@@ -54,7 +57,10 @@ public class Auth0ClientTest {
     ResponseEntity<Map> responseEntity = ResponseEntity.ok(responseMap);
 
     when(restTemplate.exchange(
-            eq(baseUrl + "oauth/token"), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
+            eq(baseUrl + "api/v2/oauth/token"),
+            eq(HttpMethod.POST),
+            any(HttpEntity.class),
+            eq(Map.class)))
         .thenReturn(responseEntity);
 
     assertThrows(RuntimeException.class, () -> auth0Client.getAccessToken());
@@ -63,7 +69,10 @@ public class Auth0ClientTest {
   @Test
   void testGetAccessToken_Failure_Exception() {
     when(restTemplate.exchange(
-            eq(baseUrl + "oauth/token"), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
+            eq(baseUrl + "api/v2/oauth/token"),
+            eq(HttpMethod.POST),
+            any(HttpEntity.class),
+            eq(Map.class)))
         .thenThrow(new RuntimeException("API error"));
 
     assertThrows(RuntimeException.class, () -> auth0Client.getAccessToken());
@@ -110,10 +119,7 @@ public class Auth0ClientTest {
     String adminAccessToken = "mock-admin-access-token";
 
     when(restTemplate.exchange(
-            eq(baseUrl + "api/v2/users"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(Map[].class)))
+            eq(baseUrl + "users"), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map[].class)))
         .thenThrow(new RuntimeException("API error"));
 
     assertThrows(

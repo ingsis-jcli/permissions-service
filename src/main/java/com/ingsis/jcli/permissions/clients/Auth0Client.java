@@ -26,7 +26,7 @@ public class Auth0Client {
       String clientSecret,
       String audience) {
     this.restTemplate = restTemplate;
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseUrl + "api/v2/";
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.audience = audience;
@@ -34,6 +34,7 @@ public class Auth0Client {
 
   public String getAccessToken() {
     String url = baseUrl + "oauth/token";
+    System.out.println("url: " + url);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
@@ -60,7 +61,7 @@ public class Auth0Client {
   }
 
   public List<UserDto> getAllUsers(String adminAccessToken, String requestingUserId) {
-    String url = baseUrl + "api/v2/users";
+    String url = baseUrl + "users";
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
