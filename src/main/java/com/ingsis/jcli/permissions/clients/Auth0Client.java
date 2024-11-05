@@ -32,6 +32,7 @@ public class Auth0Client {
   public String getAccessToken() {
     String url = baseUrl + "oauth/token";
 
+    System.out.println("url: " + url);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
 
