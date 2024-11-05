@@ -61,4 +61,9 @@ public class UserController {
     String userId = jwtService.extractUserId(token);
     return auth0Service.getAllUsers(userId);
   }
+
+  @GetMapping("/admin-token")
+  public String getAdminToken() {
+    return auth0Service.getAdminAccessToken();
+  }
 }
