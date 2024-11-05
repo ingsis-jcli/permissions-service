@@ -1,11 +1,12 @@
 package com.ingsis.jcli.permissions.clients;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class Auth0Client {
@@ -32,14 +33,15 @@ public class Auth0Client {
     String url = baseUrl + "oauth/token";
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+    headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
 
-    Map<String, String> requestBody = new HashMap<>();
-    requestBody.put("client_id", clientId);
-    requestBody.put("client_secret", clientSecret);
-    requestBody.put("audience", audience);
-    requestBody.put("grant_type", "client_credentials");
-    HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+    MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+    requestBody.add("grant_type", "client_credentials");
+    requestBody.add("client_id", clientId);
+    requestBody.add("client_secret", clientSecret);
+    requestBody.add("audience", audience);
+
+    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
 
     try {
       ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
