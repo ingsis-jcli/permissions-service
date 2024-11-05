@@ -42,7 +42,7 @@ public class Auth0Client {
     MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
     requestBody.add("client_id", clientId);
     requestBody.add("client_secret", clientSecret);
-    requestBody.add("audience", audience + "api/v2/");
+    requestBody.add("audience", baseUrl + "api/v2/");
     requestBody.add("grant_type", "client_credentials");
 
     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
