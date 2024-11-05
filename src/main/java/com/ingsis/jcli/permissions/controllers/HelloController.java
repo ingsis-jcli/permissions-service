@@ -1,5 +1,6 @@
 package com.ingsis.jcli.permissions.controllers;
 
+import com.ingsis.jcli.permissions.services.Auth0Service;
 import com.ingsis.jcli.permissions.services.HelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
   private final HelloService helloService;
+  private final Auth0Service auth0Service;
 
   @Autowired
-  public HelloController(HelloService helloService) {
+  public HelloController(HelloService helloService, Auth0Service auth0Service) {
     this.helloService = helloService;
+    this.auth0Service = auth0Service;
   }
 
   @GetMapping("/snippets")
@@ -30,5 +33,10 @@ public class HelloController {
   @GetMapping
   public String hello() {
     return helloService.getHello();
+  }
+
+  @GetMapping("/admin-token")
+  public String helloAdmin() {
+    return auth0Service.getAdminAccessToken();
   }
 }
