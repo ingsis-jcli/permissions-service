@@ -117,7 +117,7 @@ class PermissionControllerTest {
 
     mockMvc
         .perform(
-            post(path)
+            post(path + "/share")
                 .param("snippetId", snippetId.toString())
                 .param("friendId", friendId)
                 .header("Authorization", token))
@@ -138,7 +138,7 @@ class PermissionControllerTest {
 
     mockMvc
         .perform(
-            post(path)
+            post(path + "/share")
                 .param("snippetId", snippetId.toString())
                 .param("friendId", friendId)
                 .header("Authorization", token))
@@ -156,7 +156,7 @@ class PermissionControllerTest {
 
     mockMvc
         .perform(
-            post(path + "/create")
+            post(path + "/own")
                 .param("snippetId", snippetId.toString())
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -174,7 +174,7 @@ class PermissionControllerTest {
 
     mockMvc
         .perform(
-            get(path + "/user")
+            get(path + "/shared")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

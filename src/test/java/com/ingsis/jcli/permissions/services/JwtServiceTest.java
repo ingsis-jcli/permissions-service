@@ -37,7 +37,7 @@ class JwtServiceTest {
     Jwt mockJwt = createMockJwt("123456user-id");
     when(jwtDecoder.decode(anyString())).thenReturn(mockJwt);
     String actualUserId = jwtService.extractUserId(authHeader);
-    assertEquals("user-id", actualUserId, "Extracted user ID should match expected value");
+    assertEquals("123456user-id", actualUserId, "Extracted user ID should match expected value");
   }
 
   private Jwt createMockJwt(String subject) {

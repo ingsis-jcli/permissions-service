@@ -40,7 +40,7 @@ public class PermissionController {
     return ResponseEntity.ok(hasPermission);
   }
 
-  @PostMapping()
+  @PostMapping("/share")
   public ResponseEntity<Void> shareWithUser(
       @RequestParam Long snippetId,
       @RequestParam String friendId,
@@ -51,7 +51,7 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
-  @PostMapping("/create")
+  @PostMapping("/own")
   public ResponseEntity<Void> grantOwnerPermission(
       @RequestParam Long snippetId, @RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
@@ -59,7 +59,7 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping("/user")
+  @GetMapping("/shared")
   public ResponseEntity<List<Long>> getSnippetsSharedWithUser(
       @RequestHeader("Authorization") String token) {
 
