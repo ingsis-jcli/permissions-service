@@ -1,7 +1,6 @@
 package com.ingsis.jcli.permissions.controllers;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,6 +14,7 @@ import com.ingsis.jcli.permissions.common.exceptions.DeniedAction;
 import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
 import com.ingsis.jcli.permissions.services.JwtService;
 import com.ingsis.jcli.permissions.services.PermissionService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -108,16 +108,18 @@ class PermissionControllerTest {
   @Test
   public void shareWithUserOk() throws Exception {
     String userId = "1";
-    String friendEmail = "friend@example.com";
+    String friendId = "friend123";
     Long snippetId = 123L;
 
     setupJwt(userId);
+
+    when(jwtService.extractUserId(token)).thenReturn(userId);
 
     mockMvc
         .perform(
             post(path)
                 .param("snippetId", snippetId.toString())
-                .param("friendEmail", friendEmail)
+                .param("friendId", friendId)
                 .header("Authorization", token))
         .andExpect(status().isOk());
   }
@@ -125,20 +127,20 @@ class PermissionControllerTest {
   @Test
   public void shareWithUserForbidden() throws Exception {
     String userId = "1";
-    String friendEmail = "friend@example.com";
+    String friendId = "friend123";
     Long snippetId = 123L;
 
     setupJwt(userId);
 
     doThrow(new PermissionDeniedException(userId, DeniedAction.SHARE_SNIPPET))
         .when(permissionService)
-        .shareWithUser(userId, friendEmail, snippetId);
+        .shareWithUser(userId, friendId, snippetId);
 
     mockMvc
         .perform(
             post(path)
                 .param("snippetId", snippetId.toString())
-                .param("friendEmail", friendEmail)
+                .param("friendId", friendId)
                 .header("Authorization", token))
         .andExpect(status().isForbidden());
   }
@@ -150,7 +152,7 @@ class PermissionControllerTest {
 
     setupJwt(userId);
 
-    doNothing().when(permissionService).grantOwnerPermission(snippetId, userId);
+    when(jwtService.extractUserId(token)).thenReturn(userId);
 
     mockMvc
         .perform(
@@ -159,5 +161,26 @@ class PermissionControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  public void getSnippetsSharedWithUser() throws Exception {
+    String userId = "1";
+    List<Long> snippetIds = List.of(1L, 2L, 3L);
+
+    setupJwt(userId);
+
+    when(permissionService.getSnippetsSharedWithUser(userId)).thenReturn(snippetIds);
+
+    mockMvc
+        .perform(
+            get(path + "/user")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(snippetIds.size()))
+        .andExpect(jsonPath("$[0]").value(1L))
+        .andExpect(jsonPath("$[1]").value(2L))
+        .andExpect(jsonPath("$[2]").value(3L));
   }
 }

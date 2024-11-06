@@ -1,4 +1,4 @@
-package com.ingsis.jcli.permissions;
+package com.ingsis.jcli.permissions.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import com.ingsis.jcli.permissions.clients.PrintScriptClient;
 import com.ingsis.jcli.permissions.clients.SnippetsClient;
-import com.ingsis.jcli.permissions.services.HelloService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

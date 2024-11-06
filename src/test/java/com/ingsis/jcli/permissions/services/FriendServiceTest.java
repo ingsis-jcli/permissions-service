@@ -1,112 +1,85 @@
 package com.ingsis.jcli.permissions.services;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ingsis.jcli.permissions.models.User;
 import com.ingsis.jcli.permissions.repository.UserRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.ActiveProfiles;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@ActiveProfiles("test")
-public class FriendServiceTest {
+@ExtendWith(MockitoExtension.class)
+class FriendServiceTest {
 
-  @Autowired private FriendService friendService;
+  @Mock private UserRepository userRepository;
 
-  @MockBean private UserRepository userRepository;
-  @MockBean private Auth0Service auth0Service;
-  @MockBean private JwtDecoder jwtDecoder;
+  @InjectMocks private FriendService friendService;
 
-  @Test
-  public void getFriends() {
-    String userId = "userId";
-    List<String> friends = List.of("friend1", "friend2", "friend3", "friend4", "friend5");
-    Set<User> friendUsers =
-        friends.stream().map(userId1 -> new User(userId1, "")).collect(Collectors.toSet());
-    User user = new User(userId, "");
-    user.setFriends(friendUsers);
+  private User user1;
+  private User user2;
+  private User user3;
 
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
+  @BeforeEach
+  void setUp() {
+    user1 = new User("user1");
+    user2 = new User("user2");
+    user3 = new User("user3");
 
-    assertThat(friendService.getFriends(userId)).containsExactlyInAnyOrderElementsOf(friends);
+    user1.addFriend(user2);
   }
 
   @Test
-  public void getFriendsEmpty() {
-    String userId = "userId";
-    List<String> friends = List.of();
-    User user = new User(userId, "");
+  void testGetFriends() {
+    when(userRepository.findByUserId("user1")).thenReturn(Optional.of(user1));
 
-    user.setUserId(userId);
+    List<String> friends = friendService.getFriends("user1");
 
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
-
-    assertThat(friendService.getFriends(userId)).containsExactlyInAnyOrderElementsOf(friends);
+    assertEquals(1, friends.size());
+    assertEquals("user2", friends.get(0));
+    verify(userRepository).findByUserId("user1");
   }
 
   @Test
-  public void getFriendsNoUserFound() {
-    String userId = "userId";
+  void testAreFriendsWhenFriends() {
+    when(userRepository.findByUserId("user1")).thenReturn(Optional.of(user1));
+    when(userRepository.findByUserId("user2")).thenReturn(Optional.of(user2));
 
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
+    boolean result = friendService.areFriends("user1", "user2");
 
-    assertThrows(NoSuchElementException.class, () -> friendService.getFriends(userId));
+    assertTrue(result);
+    verify(userRepository).findByUserId("user1");
+    verify(userRepository).findByUserId("user2");
   }
 
   @Test
-  public void addFriend() {
-    String userId = "userId";
-    String friendId = "friendId";
+  void testAreFriendsWhenNotFriends() {
+    when(userRepository.findByUserId("user1")).thenReturn(Optional.of(user1));
+    when(userRepository.findByUserId("user3")).thenReturn(Optional.of(user3));
 
-    User user = new User(userId, "");
-    User friend = new User(friendId, "");
+    boolean result = friendService.areFriends("user1", "user3");
 
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
-    when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
-
-    friendService.addFriend(user, friend);
-
-    verify(userRepository, times(1)).save(user);
-    verify(userRepository, times(1)).save(friend);
-
-    assertTrue(user.getFriends().contains(friend));
-    assertTrue(friend.getFriends().contains(user));
+    assertFalse(result);
+    verify(userRepository).findByUserId("user1");
+    verify(userRepository).findByUserId("user3");
   }
 
   @Test
-  public void addFriendAlreadyFriends() {
-    String userId = "userId";
-    String friendId = "friendId";
+  void testAddFriend() {
+    friendService.addFriend(user1, user3);
 
-    User user = new User(userId, "");
-    User friend = new User(friendId, "");
+    assertTrue(user1.getFriends().contains(user3));
+    assertTrue(user3.getFriends().contains(user1));
 
-    user.addFriend(friend);
-    friend.addFriend(user);
-
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
-    when(userRepository.findByUserId(friendId)).thenReturn(Optional.of(friend));
-
-    friendService.addFriend(user, friend);
-
-    verify(userRepository, times(1)).save(user);
-    verify(userRepository, times(1)).save(friend);
-
-    assertTrue(user.getFriends().contains(friend));
-    assertTrue(friend.getFriends().contains(user));
+    verify(userRepository).save(user1);
+    verify(userRepository).save(user3);
   }
 }

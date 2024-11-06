@@ -32,9 +32,4 @@ public class UserController {
     String userId = jwtService.extractUserId(token);
     return auth0Service.getAllUsers(userId, page, pageSize);
   }
-
-  @GetMapping("/email")
-  public String getUserEmail(@RequestParam String id) {
-    return auth0Service.getUserEmail(id).orElseThrow();
-  }
 }

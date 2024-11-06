@@ -1,19 +1,15 @@
 package com.ingsis.jcli.permissions.clients;
 
 import com.ingsis.jcli.permissions.dtos.UserDto;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class Auth0Client {
@@ -32,7 +28,6 @@ public class Auth0Client {
 
   public String getAccessToken() {
     String url = baseUrl + "oauth/token";
-    System.out.println("url: " + url);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
@@ -86,30 +81,6 @@ public class Auth0Client {
       }
     } catch (Exception e) {
       throw new RuntimeException("Failed to get users from Auth0", e);
-    }
-  }
-
-  public Optional<String> getUserEmail(String adminAccessToken, String userId) {
-    String url = baseUrl + "api/v2/users/" + userId;
-    HttpHeaders headers = new HttpHeaders();
-    headers.setBearerAuth(adminAccessToken);
-
-    HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-    try {
-      System.out.println("Encoded URL: " + url);
-      ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-
-      if (response.getBody() != null && response.getBody().containsKey("email")) {
-        return Optional.of(response.getBody().get("email").toString());
-      } else {
-        return Optional.empty();
-      }
-    } catch (HttpClientErrorException.NotFound e) {
-      System.err.println("User not found: " + userId);
-      return Optional.empty();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to get user email from Auth0", e);
     }
   }
 }

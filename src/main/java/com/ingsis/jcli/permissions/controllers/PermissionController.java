@@ -43,11 +43,11 @@ public class PermissionController {
   @PostMapping()
   public ResponseEntity<Void> shareWithUser(
       @RequestParam Long snippetId,
-      @RequestParam String friendEmail,
+      @RequestParam String friendId,
       @RequestHeader("Authorization") String token) {
 
     String userId = jwtService.extractUserId(token);
-    permissionService.shareWithUser(userId, friendEmail, snippetId);
+    permissionService.shareWithUser(userId, friendId, snippetId);
     return ResponseEntity.ok().build();
   }
 
@@ -56,7 +56,6 @@ public class PermissionController {
       @RequestParam Long snippetId, @RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
     permissionService.grantOwnerPermission(snippetId, userId);
-    System.out.println("Permission granted");
     return ResponseEntity.ok().build();
   }
 

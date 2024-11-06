@@ -3,7 +3,6 @@ package com.ingsis.jcli.permissions.services;
 import com.ingsis.jcli.permissions.clients.Auth0Client;
 import com.ingsis.jcli.permissions.dtos.UserDto;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,15 +26,5 @@ public class Auth0Service {
   public List<UserDto> getAllUsers(String requestingUserId, int page, int pageSize) {
     String adminAccessToken = getAdminAccessToken();
     return auth0Client.getAllUsers(adminAccessToken, requestingUserId, page, pageSize);
-  }
-
-  public Optional<String> getUserEmail(String userId) {
-    String adminAccessToken = getAdminAccessToken();
-    return auth0Client.getUserEmail(adminAccessToken, userId);
-  }
-
-  public boolean userExists(String userId) {
-    String adminAccessToken = getAdminAccessToken();
-    return auth0Client.getUserEmail(adminAccessToken, userId).isPresent();
   }
 }

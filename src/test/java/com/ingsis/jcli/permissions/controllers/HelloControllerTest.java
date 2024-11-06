@@ -1,4 +1,4 @@
-package com.ingsis.jcli.permissions;
+package com.ingsis.jcli.permissions.controllers;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.jwt.Jwt.withTokenValue;

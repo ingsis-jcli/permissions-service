@@ -1,52 +1,77 @@
 package com.ingsis.jcli.permissions.services;
 
-import static org.mockito.Mockito.times;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ingsis.jcli.permissions.models.User;
 import com.ingsis.jcli.permissions.repository.UserRepository;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.ActiveProfiles;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@ActiveProfiles("test")
-public class UserServiceTest {
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
 
-  @Autowired private UserService userService;
+  @Mock private UserRepository userRepository;
 
-  @MockBean private UserRepository userRepository;
-  @MockBean private JwtDecoder jwtDecoder;
+  @InjectMocks private UserService userService;
 
-  @Test
-  public void saveNewUser() {
-    String userId = "userId";
-    String email = "email";
-    User user = new User(userId, email);
+  private User user;
 
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
-    when(userRepository.save(user)).thenReturn(user);
-
-    userService.saveUser(userId, email);
-
-    verify(userRepository, times(1)).save(user);
+  @BeforeEach
+  void setUp() {
+    user = new User("user1");
   }
 
   @Test
-  public void saveExistingUser() {
-    String userId = "userId";
-    String email = "email";
-    User user = new User(userId, email);
+  void testGetUserByIdWhenUserExists() {
+    when(userRepository.findByUserId("user1")).thenReturn(Optional.of(user));
 
-    when(userRepository.findByUserId(userId)).thenReturn(Optional.of(user));
+    Optional<User> retrievedUser = userService.getUserById("user1");
 
-    userService.saveUser(userId, email);
+    assertTrue(retrievedUser.isPresent());
+    assertEquals(user, retrievedUser.get());
+    verify(userRepository).findByUserId("user1");
+  }
 
-    verify(userRepository, times(0)).save(user);
+  @Test
+  void testGetUserByIdWhenUserDoesNotExist() {
+    when(userRepository.findByUserId("nonexistent")).thenReturn(Optional.empty());
+
+    Optional<User> retrievedUser = userService.getUserById("nonexistent");
+
+    assertTrue(retrievedUser.isEmpty());
+    verify(userRepository).findByUserId("nonexistent");
+  }
+
+  @Test
+  void testGetUserWhenUserExists() {
+    when(userRepository.findByUserId("user1")).thenReturn(Optional.of(user));
+
+    User retrievedUser = userService.getUser("user1");
+
+    assertEquals(user, retrievedUser);
+    verify(userRepository).findByUserId("user1");
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void testGetUserWhenUserDoesNotExist() {
+    when(userRepository.findByUserId("newUser")).thenReturn(Optional.empty());
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    User newUser = userService.getUser("newUser");
+
+    assertEquals("newUser", newUser.getUserId());
+    verify(userRepository).findByUserId("newUser");
+    verify(userRepository).save(newUser);
   }
 }

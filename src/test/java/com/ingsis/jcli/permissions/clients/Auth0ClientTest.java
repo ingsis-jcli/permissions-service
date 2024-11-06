@@ -11,7 +11,6 @@ import com.ingsis.jcli.permissions.dtos.UserDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -122,60 +121,5 @@ public class Auth0ClientTest {
     assertThrows(
         RuntimeException.class,
         () -> auth0Client.getAllUsers(adminAccessToken, "some-user-id", 1, 2));
-  }
-
-  @Test
-  void testGetUserEmail_Success() {
-    String adminAccessToken = "mock-admin-access-token";
-    String userId = "user-id-1";
-
-    Map<String, String> userMap = new HashMap<>();
-    userMap.put("email", "user1@example.com");
-    ResponseEntity<Map> responseEntity = ResponseEntity.ok(userMap);
-
-    when(restTemplate.exchange(
-            eq(baseUrl + "api/v2/users/" + userId),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(Map.class)))
-        .thenReturn(responseEntity);
-
-    Optional<String> email = auth0Client.getUserEmail(adminAccessToken, userId);
-
-    assertEquals("user1@example.com", email.orElse(null));
-  }
-
-  @Test
-  void testGetUserEmail_NotFound() {
-    String adminAccessToken = "mock-admin-access-token";
-    String userId = "user-id-1";
-
-    ResponseEntity<Map> responseEntity = ResponseEntity.ok(new HashMap<>());
-
-    when(restTemplate.exchange(
-            eq(baseUrl + "api/v2/users/" + userId),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(Map.class)))
-        .thenReturn(responseEntity);
-
-    Optional<String> email = auth0Client.getUserEmail(adminAccessToken, userId);
-
-    assertEquals(Optional.empty(), email);
-  }
-
-  @Test
-  void testGetUserEmail_Failure_Exception() {
-    String adminAccessToken = "mock-admin-access-token";
-    String userId = "user-id-1";
-
-    when(restTemplate.exchange(
-            eq(baseUrl + "api/v2/users/" + userId),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(Map.class)))
-        .thenThrow(new RuntimeException("API error"));
-
-    assertThrows(RuntimeException.class, () -> auth0Client.getUserEmail(adminAccessToken, userId));
   }
 }
