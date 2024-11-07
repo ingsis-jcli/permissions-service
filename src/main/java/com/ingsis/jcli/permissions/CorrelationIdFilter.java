@@ -12,7 +12,7 @@ import java.util.UUID;
 @Component
 public class CorrelationIdFilter implements WebFilter {
 
-  private static final String CORRELATION_ID_KEY = "request-id";
+  private static final String CORRELATION_ID_KEY = "correlation-id";
   private static final String CORRELATION_ID_HEADER = "X-Correlation-Id";
 
   @Override
