@@ -46,7 +46,11 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     implementation 'org.slf4j:slf4j-api:1.7.32'
-}
+    implementation('ch.qos.logback:logback-classic:1.2.10')
+    implementation('org.springframework.boot:spring-boot-starter-logging') {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'org.slf4j', module: 'slf4j-jdk14'
+    }}
 
 dependencyManagement {  // for openfeign
     imports {
