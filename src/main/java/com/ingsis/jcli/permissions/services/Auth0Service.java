@@ -26,14 +26,19 @@ public class Auth0Service {
     return auth0Client.getAccessToken();
   }
 
-  public List<UserDto> getAllUsers(String requestingUserId, int page, int pageSize, Optional<String> name) {
+  public List<UserDto> getAllUsers(
+      String requestingUserId, int page, int pageSize, Optional<String> name) {
     String adminAccessToken = getAdminAccessToken();
     List<UserDto> allUsers = auth0Client.getAllUsers(adminAccessToken, requestingUserId);
 
-    List<UserDto> filteredUsers = allUsers.stream()
-      .filter(user -> !user.getId().equals(requestingUserId))
-      .filter(user -> name.map(n -> user.getEmail().toLowerCase().contains(n.toLowerCase())).orElse(true))
-      .collect(Collectors.toList());
+    List<UserDto> filteredUsers =
+        allUsers.stream()
+            .filter(user -> !user.getId().equals(requestingUserId))
+            .filter(
+                user ->
+                    name.map(n -> user.getEmail().toLowerCase().contains(n.toLowerCase()))
+                        .orElse(true))
+            .collect(Collectors.toList());
 
     int adjustedPage = Math.max(page - 1, 0);
 
@@ -45,7 +50,6 @@ public class Auth0Service {
 
     return filteredUsers.subList(fromIndex, toIndex);
   }
-
 
   public int getUserCount() {
     String adminAccessToken = getAdminAccessToken();
