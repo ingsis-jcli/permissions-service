@@ -13,6 +13,6 @@ public interface SnippetsClient {
   @RequestMapping(method = RequestMethod.GET, value = "/hello")
   String hello();
 
-  @RequestMapping(method = RequestMethod.GET, value = "/snippets")
+  @RequestMapping(method = RequestMethod.GET, value = "/snippet")
   ResponseEntity<SnippetResponse> getSnippet(@RequestParam("snippetId") Long snippetId);
 }
