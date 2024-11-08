@@ -32,20 +32,9 @@ public class UserController {
       @RequestParam(required = false, defaultValue = "10") int pageSize,
       @RequestParam(required = false) Optional<String> name,
       @RequestHeader("Authorization") String token) {
-
-    if (name.isPresent() && (name.get().isBlank() || name.get().isEmpty())) {
-      name = Optional.empty();
-    }
-    System.out.println("name: " + name);
-    if (name.isPresent()) {
-      System.out.println("name is present: " + "-" + name.get() + "-");
-    }
-    System.out.println("page: " + page);
-    System.out.println("pageSize: " + pageSize);
     String userId = jwtService.extractUserId(token);
     int count = auth0Service.getUserCount() - 1;
     List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize, name);
-    System.out.println("users: " + users);
     return new PaginatedUsers(page, pageSize, count, users);
   }
 }
