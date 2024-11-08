@@ -12,6 +12,7 @@ import com.ingsis.jcli.permissions.common.responses.PaginatedUsers;
 import com.ingsis.jcli.permissions.services.Auth0Service;
 import com.ingsis.jcli.permissions.services.JwtService;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -59,7 +60,7 @@ public class UserControllerTest {
   public void getUsers() throws Exception {
     String userId = "userId";
     setupJwt(userId);
-    when(auth0Service.getAllUsers(userId, 1, 2)).thenReturn(List.of());
+    when(auth0Service.getAllUsers(userId, 1, 2, Optional.empty())).thenReturn(List.of());
 
     MvcResult result =
         mockMvc
