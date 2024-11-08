@@ -36,6 +36,10 @@ public class UserController {
     if (name.isPresent() && (name.get().isBlank() || name.get().isEmpty())) {
       name = Optional.empty();
     }
+    System.out.println("name: " + name);
+    if (name.isPresent()) {
+      System.out.println("name is present: " + "-" + name.get() + "-");
+    }
     String userId = jwtService.extractUserId(token);
     int count = auth0Service.getUserCount() - 1;
     List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize, name);
