@@ -328,12 +328,12 @@ common: &default_settings
 # provide configuration settings for these environments here.
 development:
   <<: *default_settings
-  app_name: 'snippet-searcher (Development)'
+  app_name: 'permissions-service (Development)'
 test:
   <<: *default_settings
-  app_name: 'snippet-searcher (Test)'
+  app_name: 'permissions-service (Test)'
 production:
   <<: *default_settings
 staging:
   <<: *default_settings
-  app_name: 'snippet-searcher (Staging)'
+  app_name: 'permissions-service (Staging)'
