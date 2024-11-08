@@ -1,108 +1,139 @@
 package com.ingsis.jcli.permissions.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ingsis.jcli.permissions.common.PermissionType;
-import com.ingsis.jcli.permissions.models.Snippet;
+import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
 import com.ingsis.jcli.permissions.models.User;
-import com.ingsis.jcli.permissions.repository.SnippetRepository;
 import com.ingsis.jcli.permissions.repository.UserRepository;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class PermissionServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PermissionServiceTest {
+
+  @Mock private UserService userService;
 
   @Mock private UserRepository userRepository;
-
-  @Mock private SnippetRepository snippetRepository;
 
   @InjectMocks private PermissionService permissionService;
 
   private User user;
-  private Snippet snippet;
+  private User friend;
+  private Long snippetId;
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.openMocks(this);
-
-    user = new User();
-    user.setId(1L);
-    user.setName("Test User");
-
-    snippet = new Snippet();
-    snippet.setId(1L);
-    snippet.setContent("Sample snippet");
-
-    user.setSnippetPermissions(new HashMap<>());
-    snippet.setUserPermissions(new HashMap<>());
+    user = new User("user1");
+    friend = new User("friend1");
+    snippetId = 1L;
   }
 
   @Test
-  void testHasPermission_UserHasPermissionInSnippet() {
-    user.getSnippetPermissions().put(snippet, PermissionType.WRITE);
+  void testGrantOwnerPermissionWhenNoPermissionExists() {
+    when(userService.getUser("user1")).thenReturn(user);
+    String result = permissionService.grantOwnerPermission(snippetId, "user1");
 
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-    when(snippetRepository.findById(1L)).thenReturn(Optional.of(snippet));
-
-    boolean hasPermission = permissionService.hasPermission(1L, 1L, PermissionType.WRITE);
-
-    assertThat(hasPermission).isTrue();
+    assertEquals("Permission granted", result);
+    assertTrue(
+        user.getSnippetPermissions().stream()
+            .anyMatch(
+                sp ->
+                    sp.getSnippetId().equals(snippetId)
+                        && sp.getPermissions().contains(PermissionType.OWNER)));
+    verify(userRepository).save(user);
   }
 
   @Test
-  void testHasPermission_SnippetHasPermissionForUser() {
-    snippet.getUserPermissions().put(user, PermissionType.READ);
+  void testGrantOwnerPermissionWhenPermissionAlreadyExists() {
+    user.addSnippetPermission(snippetId, PermissionType.OWNER);
+    when(userService.getUser("user1")).thenReturn(user);
 
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-    when(snippetRepository.findById(1L)).thenReturn(Optional.of(snippet));
+    String result = permissionService.grantOwnerPermission(snippetId, "user1");
 
-    boolean hasPermission = permissionService.hasPermission(1L, 1L, PermissionType.READ);
-
-    assertThat(hasPermission).isTrue();
+    assertEquals("Permission already granted", result);
+    verify(userRepository, never()).save(user);
   }
 
   @Test
-  void testHasPermission_NoPermissionInBoth() {
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-    when(snippetRepository.findById(1L)).thenReturn(Optional.of(snippet));
+  void testHasPermissionWhenPermissionExists() {
+    user.addSnippetPermission(snippetId, PermissionType.SHARED);
+    when(userService.getUser("user1")).thenReturn(user);
 
-    boolean hasPermission = permissionService.hasPermission(1L, 1L, PermissionType.EXECUTE);
-
-    assertThat(hasPermission).isFalse();
+    assertTrue(permissionService.hasPermission("user1", snippetId, PermissionType.SHARED));
   }
 
   @Test
-  void testHasPermission_UserNotFound() {
-    when(userRepository.findById(1L)).thenReturn(Optional.empty());
+  void testHasPermissionWhenPermissionDoesNotExist() {
+    when(userService.getUser("user1")).thenReturn(user);
 
-    boolean hasPermission = permissionService.hasPermission(1L, 1L, PermissionType.READ);
-
-    assertThat(hasPermission).isFalse();
+    assertFalse(permissionService.hasPermission("user1", snippetId, PermissionType.OWNER));
   }
 
   @Test
-  void testHasPermission_SnippetNotFound() {
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-    when(snippetRepository.findById(1L)).thenReturn(Optional.empty());
+  void testShareWithUserWhenPermissionIsGranted() {
+    user.addSnippetPermission(snippetId, PermissionType.OWNER);
+    when(userService.getUser("user1")).thenReturn(user);
+    when(userService.getUser("friend1")).thenReturn(friend);
 
-    boolean hasPermission = permissionService.hasPermission(1L, 1L, PermissionType.READ);
+    String result = permissionService.shareWithUser("user1", "friend1", snippetId);
 
-    assertThat(hasPermission).isFalse();
+    assertEquals("Snippet shared with user", result);
+    assertTrue(
+        friend.getSnippetPermissions().stream()
+            .anyMatch(
+                sp ->
+                    sp.getSnippetId().equals(snippetId)
+                        && sp.getPermissions().contains(PermissionType.SHARED)));
+    verify(userRepository).save(friend);
   }
 
   @Test
-  void testHasPermission_UserAndSnippetBothHaveNoPermissions() {
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-    when(snippetRepository.findById(1L)).thenReturn(Optional.of(snippet));
+  void testShareWithUserWhenAlreadyShared() {
+    user.addSnippetPermission(snippetId, PermissionType.OWNER);
+    friend.addSnippetPermission(snippetId, PermissionType.SHARED);
+    when(userService.getUser("user1")).thenReturn(user);
+    when(userService.getUser("friend1")).thenReturn(friend);
 
-    boolean hasPermission = permissionService.hasPermission(1L, 1L, PermissionType.READ);
+    String result = permissionService.shareWithUser("user1", "friend1", snippetId);
 
-    assertThat(hasPermission).isFalse();
+    assertEquals("Snippet already shared with user", result);
+    verify(userRepository, never()).save(friend);
+  }
+
+  @Test
+  void testShareWithUserWhenPermissionDenied() {
+    when(userService.getUser("user1")).thenReturn(user);
+    when(userService.getUser("friend1")).thenReturn(friend);
+
+    assertThrows(
+        PermissionDeniedException.class,
+        () -> permissionService.shareWithUser("user1", "friend1", snippetId));
+  }
+
+  @Test
+  void testGetSnippetsSharedWithUser() {
+    user.addSnippetPermission(snippetId, PermissionType.SHARED);
+    Long snippetId2 = 2L;
+    user.addSnippetPermission(snippetId2, PermissionType.SHARED);
+
+    when(userService.getUser("user1")).thenReturn(user);
+
+    List<Long> sharedSnippets = permissionService.getSnippetsSharedWithUser("user1");
+
+    assertEquals(2, sharedSnippets.size());
+    assertTrue(sharedSnippets.contains(snippetId));
+    assertTrue(sharedSnippets.contains(snippetId2));
   }
 }

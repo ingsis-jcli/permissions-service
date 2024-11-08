@@ -1,38 +1,84 @@
 package com.ingsis.jcli.permissions.models;
 
 import com.ingsis.jcli.permissions.common.PermissionType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapKeyJoinColumn;
-import jakarta.persistence.SequenceGenerator;
-import java.util.HashMap;
-import java.util.Map;
-import lombok.Data;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Setter
+@NoArgsConstructor
+@Table(name = "users")
 public class User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-  @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
-  private Long id;
+  @Id @Getter private String userId;
 
-  private String name;
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "user_friends",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "friend_id"))
+  private Set<User> friends = new HashSet<>();
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "user_snippet_permissions", joinColumns = @JoinColumn(name = "user_id"))
-  @MapKeyJoinColumn(name = "snippet_id")
-  @Column(name = "permission_type")
-  @Enumerated(EnumType.STRING)
-  private Map<Snippet, PermissionType> snippetPermissions = new HashMap<>();
+  @Setter
+  @Getter
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id")
+  private Set<SnippetPermission> snippetPermissions = new HashSet<>();
+
+  public User(String userId) {
+    this.userId = userId;
+  }
+
+  public void addFriend(User friend) {
+    if (!friends.contains(friend)) {
+      friends.add(friend);
+      friend.addFriend(this);
+    }
+  }
+
+  public Set<User> getFriends() {
+    return Collections.unmodifiableSet(friends);
+  }
+
+  public void addSnippetPermission(Long snippetId, PermissionType permissionType) {
+    Optional<SnippetPermission> existingPermission =
+        snippetPermissions.stream().filter(sp -> sp.getSnippetId().equals(snippetId)).findFirst();
+
+    if (existingPermission.isPresent()) {
+      List<PermissionType> permissions = existingPermission.get().getPermissions();
+      if (!permissions.contains(permissionType)) {
+        permissions.add(permissionType);
+      }
+    } else {
+      SnippetPermission newPermission =
+          new SnippetPermission(snippetId, new ArrayList<>(List.of(permissionType)));
+      snippetPermissions.add(newPermission);
+    }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof User && userId.equals(((User) obj).userId);
+  }
+
+  @Override
+  public int hashCode() {
+    return userId.hashCode();
+  }
 }

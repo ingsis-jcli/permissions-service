@@ -2,10 +2,7 @@ package com.ingsis.jcli.permissions.common;
 
 public enum PermissionType {
   OWNER("owner"),
-  READ("read"),
-  WRITE("write"),
-  EXECUTE("execute"),
-  SHARE("share");
+  SHARED("shared");
 
   public final String name;
 
