@@ -34,8 +34,7 @@ public class UserController {
       @RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
     int count = auth0Service.getUserCount() - 1;
-    List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize);
-    name.ifPresent(s -> users.removeIf(user -> !user.getEmail().contains(s)));
+    List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize, name);
     return new PaginatedUsers(page, pageSize, count, users);
   }
 }

@@ -3,6 +3,8 @@ package com.ingsis.jcli.permissions.services;
 import com.ingsis.jcli.permissions.clients.Auth0Client;
 import com.ingsis.jcli.permissions.dtos.UserDto;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,9 +25,23 @@ public class Auth0Service {
     return auth0Client.getAccessToken();
   }
 
-  public List<UserDto> getAllUsers(String requestingUserId, int page, int pageSize) {
+  public List<UserDto> getAllUsers(
+      String requestingUserId, int page, int pageSize, Optional<String> name) {
     String adminAccessToken = getAdminAccessToken();
-    return auth0Client.getAllUsers(adminAccessToken, requestingUserId, page, pageSize);
+    List<UserDto> allUsers = auth0Client.getAllUsers(adminAccessToken, requestingUserId);
+
+    List<UserDto> filteredUsers =
+        allUsers.stream()
+            .filter(user -> !user.getId().equals(requestingUserId))
+            .filter(
+                user ->
+                    name.map(n -> user.getEmail().toLowerCase().contains(n.toLowerCase()))
+                        .orElse(true))
+            .collect(Collectors.toList());
+
+    int fromIndex = Math.min(page * pageSize, filteredUsers.size());
+    int toIndex = Math.min(fromIndex + pageSize, filteredUsers.size());
+    return filteredUsers.subList(fromIndex, toIndex);
   }
 
   public int getUserCount() {
