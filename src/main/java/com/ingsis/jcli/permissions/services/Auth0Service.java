@@ -18,8 +18,9 @@ public class Auth0Service {
   public Auth0Service(
       @Value("${auth0.management.client-id}") String clientId,
       @Value("${auth0.management.client-secret}") String clientSecret,
-      @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String authServerUri) {
-    this.auth0Client = new Auth0Client(new RestTemplate(), authServerUri, clientId, clientSecret);
+      @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String authServerUri,
+      RestTemplate restTemplate) {
+    this.auth0Client = new Auth0Client(restTemplate, authServerUri, clientId, clientSecret);
   }
 
   public String getAdminAccessToken() {
