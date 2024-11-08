@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "snippets", url = "http://infra-snippets-api:8080/", configuration = com.ingsis.jcli.permissions.FeignConfig.class)
+@FeignClient(
+    value = "snippets",
+    url = "http://infra-snippets-api:8080/",
+    configuration = com.ingsis.jcli.permissions.FeignConfig.class)
 public interface SnippetsClient {
 
   @RequestMapping(method = RequestMethod.GET, value = "/hello")
