@@ -40,6 +40,8 @@ public class UserController {
     if (name.isPresent()) {
       System.out.println("name is present: " + "-" + name.get() + "-");
     }
+    System.out.println("page: " + page);
+    System.out.println("pageSize: " + pageSize);
     String userId = jwtService.extractUserId(token);
     int count = auth0Service.getUserCount() - 1;
     List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize, name);
