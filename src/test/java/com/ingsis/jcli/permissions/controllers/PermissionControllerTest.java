@@ -9,9 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.common.PermissionType;
 import com.ingsis.jcli.permissions.common.exceptions.DeniedAction;
 import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
+import com.ingsis.jcli.permissions.common.responses.ProcessStatus;
+import com.ingsis.jcli.permissions.common.responses.SnippetResponse;
 import com.ingsis.jcli.permissions.services.JwtService;
 import com.ingsis.jcli.permissions.services.PermissionService;
 import java.util.List;
@@ -21,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +38,7 @@ class PermissionControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private PermissionService permissionService;
+  @MockBean private SnippetsClient snippetsClient;
 
   @MockBean private JwtDecoder jwtDecoder;
 
@@ -110,10 +115,23 @@ class PermissionControllerTest {
     String userId = "1";
     String friendId = "friend123";
     Long snippetId = 123L;
+    String token = "Bearer test-token";
 
     setupJwt(userId);
 
+    SnippetResponse snippetResponse =
+        new SnippetResponse(
+            snippetId,
+            "a",
+            "let a: string;",
+            "printscript",
+            "1.0",
+            "ps",
+            ProcessStatus.COMPLIANT,
+            userId);
+
     when(jwtService.extractUserId(token)).thenReturn(userId);
+    when(snippetsClient.getSnippet(snippetId)).thenReturn(ResponseEntity.ok(snippetResponse));
 
     mockMvc
         .perform(
@@ -121,7 +139,14 @@ class PermissionControllerTest {
                 .param("snippetId", snippetId.toString())
                 .param("friendId", friendId)
                 .header("Authorization", token))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(snippetResponse.getId()))
+        .andExpect(jsonPath("$.name").value(snippetResponse.getName()))
+        .andExpect(jsonPath("$.content").value(snippetResponse.getContent()))
+        .andExpect(jsonPath("$.language").value(snippetResponse.getLanguage()))
+        .andExpect(jsonPath("$.version").value(snippetResponse.getVersion()))
+        .andExpect(jsonPath("$.compliance").value(snippetResponse.getCompliance().toString()))
+        .andExpect(jsonPath("$.author").value(snippetResponse.getAuthor()));
   }
 
   @Test
@@ -135,6 +160,19 @@ class PermissionControllerTest {
     doThrow(new PermissionDeniedException(userId, DeniedAction.SHARE_SNIPPET))
         .when(permissionService)
         .shareWithUser(userId, friendId, snippetId);
+
+    SnippetResponse snippetResponse =
+        new SnippetResponse(
+            snippetId,
+            "a",
+            "let a: string;",
+            "printscript",
+            "1.0",
+            "ps",
+            ProcessStatus.COMPLIANT,
+            userId);
+
+    when(snippetsClient.getSnippet(snippetId)).thenReturn(ResponseEntity.ok(snippetResponse));
 
     mockMvc
         .perform(

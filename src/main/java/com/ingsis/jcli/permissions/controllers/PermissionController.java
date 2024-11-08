@@ -1,6 +1,8 @@
 package com.ingsis.jcli.permissions.controllers;
 
+import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.common.PermissionType;
+import com.ingsis.jcli.permissions.common.responses.SnippetResponse;
 import com.ingsis.jcli.permissions.services.JwtService;
 import com.ingsis.jcli.permissions.services.PermissionService;
 import java.util.List;
@@ -19,11 +21,14 @@ public class PermissionController {
 
   private final PermissionService permissionService;
   private final JwtService jwtService;
+  private final SnippetsClient snippetsClient;
 
   @Autowired
-  public PermissionController(PermissionService permissionService, JwtService jwtService) {
+  public PermissionController(
+      PermissionService permissionService, JwtService jwtService, SnippetsClient snippetsClient) {
     this.permissionService = permissionService;
     this.jwtService = jwtService;
+    this.snippetsClient = snippetsClient;
   }
 
   @GetMapping()
@@ -41,14 +46,19 @@ public class PermissionController {
   }
 
   @PostMapping("/share")
-  public ResponseEntity<Void> shareWithUser(
+  public ResponseEntity<SnippetResponse> shareWithUser(
       @RequestParam Long snippetId,
       @RequestParam String friendId,
       @RequestHeader("Authorization") String token) {
 
+    System.out.println("Sharing snippet with user: " + friendId);
+
     String userId = jwtService.extractUserId(token);
+
+    SnippetResponse snippetResponse = snippetsClient.getSnippet(snippetId).getBody();
+
     permissionService.shareWithUser(userId, friendId, snippetId);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(snippetResponse);
   }
 
   @PostMapping("/own")
