@@ -9,5 +9,5 @@ COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application
 COPY newrelic-agent/newrelic.jar /app/newrelic.jar
 COPY newrelic.yml app/newrelic.yml
 WORKDIR /app
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=production", "-Dnewrelic.config.license_key=$NEW_RELIC_LICENSE_KEY",, "-javaagent:/app/newrelic.jar", "/app/spring-boot-application.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=production", "-javaagent:/app/newrelic.jar", "/app/spring-boot-application.jar"]
 
