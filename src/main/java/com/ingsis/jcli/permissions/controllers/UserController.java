@@ -43,6 +43,7 @@ public class UserController {
     String userId = jwtService.extractUserId(token);
     int count = auth0Service.getUserCount() - 1;
     List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize, name);
+    System.out.println("users: " + users);
     return new PaginatedUsers(page, pageSize, count, users);
   }
 }
