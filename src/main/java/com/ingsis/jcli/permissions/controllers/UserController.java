@@ -1,9 +1,8 @@
 package com.ingsis.jcli.permissions.controllers;
 
-import com.ingsis.jcli.permissions.dtos.UserDto;
+import com.ingsis.jcli.permissions.common.responses.PaginatedUsers;
 import com.ingsis.jcli.permissions.services.Auth0Service;
 import com.ingsis.jcli.permissions.services.JwtService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,11 +24,19 @@ public class UserController {
   }
 
   @GetMapping()
-  public List<UserDto> getUsers(
+  public PaginatedUsers getUsers(
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
       @RequestHeader("Authorization") String token) {
     String userId = jwtService.extractUserId(token);
-    return auth0Service.getAllUsers(userId, page, pageSize);
+    int count = auth0Service.getUserCount() - 1;
+    PaginatedUsers paginatedUsers =
+        new PaginatedUsers(page, pageSize, count, auth0Service.getAllUsers(userId, page, pageSize));
+    return paginatedUsers;
+  }
+
+  @GetMapping("/count")
+  public int getUserCount() {
+    return auth0Service.getUserCount();
   }
 }

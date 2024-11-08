@@ -1,17 +1,15 @@
 package com.ingsis.jcli.permissions.services;
 
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 @Order(2)
@@ -21,9 +19,10 @@ public class RequestLogFilter implements Filter {
 
   @Override
   public void doFilter(
-    jakarta.servlet.ServletRequest request,
-    jakarta.servlet.ServletResponse response,
-    FilterChain chain) throws IOException, ServletException {
+      jakarta.servlet.ServletRequest request,
+      jakarta.servlet.ServletResponse response,
+      FilterChain chain)
+      throws IOException, ServletException {
 
     if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
       HttpServletRequest httpRequest = (HttpServletRequest) request;

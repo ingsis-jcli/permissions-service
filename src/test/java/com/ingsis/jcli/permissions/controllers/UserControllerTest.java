@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ingsis.jcli.permissions.dtos.UserDto;
+import com.ingsis.jcli.permissions.common.responses.PaginatedUsers;
 import com.ingsis.jcli.permissions.services.Auth0Service;
 import com.ingsis.jcli.permissions.services.JwtService;
 import java.util.List;
@@ -67,8 +67,8 @@ public class UserControllerTest {
             .andExpect(status().isOk())
             .andReturn();
 
-    List<UserDto> users =
+    PaginatedUsers users =
         objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-    assertThat(users).isEmpty();
+    assertThat(users.getUsers()).isEmpty();
   }
 }

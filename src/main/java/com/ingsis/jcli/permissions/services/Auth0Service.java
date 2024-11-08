@@ -27,4 +27,9 @@ public class Auth0Service {
     String adminAccessToken = getAdminAccessToken();
     return auth0Client.getAllUsers(adminAccessToken, requestingUserId, page, pageSize);
   }
+
+  public int getUserCount() {
+    String adminAccessToken = getAdminAccessToken();
+    return auth0Client.getTotalUserCount(adminAccessToken);
+  }
 }
