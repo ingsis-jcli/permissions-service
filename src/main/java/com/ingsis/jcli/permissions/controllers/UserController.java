@@ -32,6 +32,14 @@ public class UserController {
       @RequestParam(required = false, defaultValue = "10") int pageSize,
       @RequestParam(required = false) Optional<String> name,
       @RequestHeader("Authorization") String token) {
+
+    if (name.isEmpty()) {
+      System.out.println("Name is empty");
+      System.out.println("Received: " + page + " " + pageSize + " " + name + " " + token);
+    } else {
+      System.out.println("Name is not empty");
+      System.out.println("Received: " + page + " " + pageSize + " " + name.get() + " " + token);
+    }
     String userId = jwtService.extractUserId(token);
     int count = auth0Service.getUserCount() - 1;
     List<UserDto> users = auth0Service.getAllUsers(userId, page, pageSize, name);
