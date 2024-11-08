@@ -83,4 +83,24 @@ public class Auth0Client {
       throw new RuntimeException("Failed to get users from Auth0", e);
     }
   }
+
+  public int getTotalUserCount(String adminAccessToken) {
+    String url = baseUrl + "api/v2/users?include_totals=true&page=0&per_page=1";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(adminAccessToken);
+
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+    try {
+      ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+
+      if (response.getBody() != null && response.getBody().containsKey("total")) {
+        return (int) response.getBody().get("total");
+      } else {
+        throw new RuntimeException("Total count not found in the response");
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to get total user count from Auth0", e);
+    }
+  }
 }
