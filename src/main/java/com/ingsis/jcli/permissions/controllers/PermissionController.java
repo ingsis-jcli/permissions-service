@@ -79,9 +79,7 @@ public class PermissionController {
   }
 
   @GetMapping("/alert")
-  public void newRelicAlert(
-    @RequestHeader("Authorization") String token) {
+  public void newRelicAlert(@RequestHeader("Authorization") String token) {
     throw new RuntimeException("This is an exception");
   }
-
 }
