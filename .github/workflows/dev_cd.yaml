@@ -15,7 +15,7 @@ jobs:
         with:
           host: ${{ secrets.VM_HOST_DEV }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_KEY }}
+          key: ${{ secrets.VM_DEV_KEY }}
           script: |
             echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
             sudo docker-compose -f docker-compose.dev.yml pull permissions
