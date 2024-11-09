@@ -1,10 +1,11 @@
 package com.ingsis.jcli.permissions;
 
-import static com.ingsis.jcli.permissions.CorrelationIdFilter.CORRELATION_ID_HEADER;
-import static com.ingsis.jcli.permissions.CorrelationIdFilter.CORRELATION_ID_KEY;
+import static com.ingsis.jcli.permissions.server.CorrelationIdFilter.CORRELATION_ID_HEADER;
+import static com.ingsis.jcli.permissions.server.CorrelationIdFilter.CORRELATION_ID_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.ingsis.jcli.permissions.config.FeignConfig;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.jupiter.api.BeforeEach;

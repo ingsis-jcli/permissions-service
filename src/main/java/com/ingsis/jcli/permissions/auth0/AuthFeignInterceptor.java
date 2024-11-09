@@ -1,7 +1,7 @@
 package com.ingsis.jcli.permissions.auth0;
 
-import static com.ingsis.jcli.permissions.CorrelationIdFilter.CORRELATION_ID_HEADER;
-import static com.ingsis.jcli.permissions.CorrelationIdFilter.CORRELATION_ID_KEY;
+import static com.ingsis.jcli.permissions.server.CorrelationIdFilter.CORRELATION_ID_HEADER;
+import static com.ingsis.jcli.permissions.server.CorrelationIdFilter.CORRELATION_ID_KEY;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

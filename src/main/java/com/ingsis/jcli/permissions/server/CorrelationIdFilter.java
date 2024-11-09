@@ -1,4 +1,4 @@
-package com.ingsis.jcli.permissions;
+package com.ingsis.jcli.permissions.server;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;

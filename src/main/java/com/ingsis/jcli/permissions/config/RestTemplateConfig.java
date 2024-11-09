@@ -1,5 +1,7 @@
-package com.ingsis.jcli.permissions;
+package com.ingsis.jcli.permissions.config;
 
+import com.ingsis.jcli.permissions.Generated;
+import com.ingsis.jcli.permissions.server.CorrelationIdInterceptor;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
