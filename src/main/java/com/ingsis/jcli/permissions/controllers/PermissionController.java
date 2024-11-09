@@ -77,4 +77,11 @@ public class PermissionController {
     List<Long> snippetIds = permissionService.getSnippetsSharedWithUser(userId);
     return ResponseEntity.ok(snippetIds);
   }
+
+  @GetMapping("/alert")
+  public void newRelicAlert(
+    @RequestHeader("Authorization") String token) {
+    throw new RuntimeException("This is an exception");
+  }
+
 }
