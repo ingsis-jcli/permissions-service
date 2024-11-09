@@ -83,4 +83,3 @@ public class PermissionController {
     throw new RuntimeException("This is an exception");
   }
 }
-
