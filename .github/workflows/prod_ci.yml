@@ -60,6 +60,8 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_PROD_KEY }}
           script: |
+            pwd
+            cd infra
             echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
             sudo docker-compose -f docker-compose.prod.yml pull permissions
             sudo docker-compose -f docker-compose.prod.yml up -d permissions
