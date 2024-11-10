@@ -1,36 +1,22 @@
-name: "Continuous Deployment"
+name: "Continuous Deployment to Prod"
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
 jobs:
-  push_to_registry:
-    name: Push Docker image to GitHub Packages
+  deploy_prod:
+    name: Deploy Docker Image to Prod VM
     runs-on: ubuntu-latest
+
     steps:
-      - name: Create Short SHA
-        uses: benjlevesque/short-sha@v1.2
-        id: short-sha
+      - name: Update service on Prod VM with new image
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          length: 8
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ingsis-jcli
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push to GitHub Packages
-        id: docker_build
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: |
-            ghcr.io/ingsis-jcli/permissions:latest
+          host: ${{ secrets.VM_HOST_PROD }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_PROD_KEY }}
+          script: |
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
+            sudo docker-compose -f docker-compose.prod.yml pull permissions
+            sudo docker-compose -f docker-compose.prod.yml up -d permissions
