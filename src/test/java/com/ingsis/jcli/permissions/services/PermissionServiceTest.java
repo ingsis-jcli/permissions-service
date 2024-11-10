@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 
 import com.ingsis.jcli.permissions.common.PermissionType;
 import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
-import com.ingsis.jcli.permissions.models.SnippetPermission;
 import com.ingsis.jcli.permissions.models.User;
+import com.ingsis.jcli.permissions.repository.PermissionRepository;
 import com.ingsis.jcli.permissions.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +27,8 @@ class PermissionServiceTest {
   @Mock private UserService userService;
 
   @Mock private UserRepository userRepository;
+
+  @Mock private PermissionRepository snippetPermissionRepository;
 
   @InjectMocks private PermissionService permissionService;
 
@@ -140,28 +142,10 @@ class PermissionServiceTest {
 
   @Test
   void testDeletePermissionsBySnippetId() {
-    User user1 = new User("user1");
-    User user2 = new User("user2");
-
-    SnippetPermission permission1 = new SnippetPermission(snippetId, List.of(PermissionType.OWNER));
-    SnippetPermission permission2 =
-        new SnippetPermission(snippetId, List.of(PermissionType.SHARED));
-
-    user1.getSnippetPermissions().add(permission1);
-    user2.getSnippetPermissions().add(permission2);
-
-    when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+    Long snippetId = 1L;
 
     permissionService.deletePermissionsBySnippetId(snippetId);
 
-    assertFalse(
-        user1.getSnippetPermissions().stream().anyMatch(sp -> sp.getSnippetId().equals(snippetId)),
-        "User1 debería tener sus permisos del snippet eliminados");
-    assertFalse(
-        user2.getSnippetPermissions().stream().anyMatch(sp -> sp.getSnippetId().equals(snippetId)),
-        "User2 debería tener sus permisos del snippet eliminados");
-
-    verify(userRepository).save(user1);
-    verify(userRepository).save(user2);
+    verify(snippetPermissionRepository).deleteBySnippetId(snippetId);
   }
 }

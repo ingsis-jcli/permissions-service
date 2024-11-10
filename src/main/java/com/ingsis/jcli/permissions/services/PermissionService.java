@@ -5,6 +5,7 @@ import com.ingsis.jcli.permissions.common.exceptions.DeniedAction;
 import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
 import com.ingsis.jcli.permissions.models.SnippetPermission;
 import com.ingsis.jcli.permissions.models.User;
+import com.ingsis.jcli.permissions.repository.PermissionRepository;
 import com.ingsis.jcli.permissions.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +19,16 @@ public class PermissionService {
 
   private final UserService userService;
   private final UserRepository userRepository;
+  private PermissionRepository snippetPermissionRepository;
 
   @Autowired
-  public PermissionService(UserService userService, UserRepository userRepository) {
+  public PermissionService(
+      UserService userService,
+      UserRepository userRepository,
+      PermissionRepository snippetPermissionRepository) {
     this.userService = userService;
     this.userRepository = userRepository;
+    this.snippetPermissionRepository = snippetPermissionRepository;
   }
 
   public Optional<SnippetPermission> getUserPermissionOnSnippet(Long snippetId, User user) {
@@ -93,13 +99,6 @@ public class PermissionService {
   }
 
   public void deletePermissionsBySnippetId(Long snippetId) {
-    List<User> users = userRepository.findAll();
-
-    for (User user : users) {
-      Set<SnippetPermission> snippetPermissions = user.getSnippetPermissions();
-
-      snippetPermissions.removeIf(permission -> permission.getSnippetId().equals(snippetId));
-      userRepository.save(user);
-    }
+    snippetPermissionRepository.deleteBySnippetId(snippetId);
   }
 }
