@@ -1,8 +1,10 @@
 package com.ingsis.jcli.permissions.controllers;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -220,5 +222,22 @@ class PermissionControllerTest {
         .andExpect(jsonPath("$[0]").value(1L))
         .andExpect(jsonPath("$[1]").value(2L))
         .andExpect(jsonPath("$[2]").value(3L));
+  }
+
+  @Test
+  public void deletePermissionsBySnippetIdSuccess() throws Exception {
+    Long snippetId = 1L;
+    String userId = "123";
+
+    setupJwt(userId);
+
+    doNothing().when(permissionService).deletePermissionsBySnippetId(snippetId);
+
+    mockMvc
+        .perform(
+            delete(path + "/snippet/" + snippetId)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
   }
 }

@@ -91,4 +91,15 @@ public class PermissionService {
         .map(SnippetPermission::getSnippetId)
         .collect(Collectors.toList());
   }
+
+  public void deletePermissionsBySnippetId(Long snippetId) {
+    List<User> users = userRepository.findAll();
+
+    for (User user : users) {
+      Set<SnippetPermission> snippetPermissions = user.getSnippetPermissions();
+
+      snippetPermissions.removeIf(permission -> permission.getSnippetId().equals(snippetId));
+      userRepository.save(user);
+    }
+  }
 }
