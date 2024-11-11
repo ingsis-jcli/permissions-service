@@ -1,6 +1,5 @@
 package com.ingsis.jcli.permissions.controllers;
 
-import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.common.PermissionType;
 import com.ingsis.jcli.permissions.common.responses.SnippetResponse;
 import com.ingsis.jcli.permissions.services.JwtService;
@@ -23,14 +22,12 @@ public class PermissionController {
 
   private final PermissionService permissionService;
   private final JwtService jwtService;
-  private final SnippetsClient snippetsClient;
 
   @Autowired
   public PermissionController(
-      PermissionService permissionService, JwtService jwtService, SnippetsClient snippetsClient) {
+      PermissionService permissionService, JwtService jwtService) {
     this.permissionService = permissionService;
     this.jwtService = jwtService;
-    this.snippetsClient = snippetsClient;
   }
 
   @GetMapping()
@@ -57,9 +54,10 @@ public class PermissionController {
 
     String userId = jwtService.extractUserId(token);
 
-    SnippetResponse snippetResponse = snippetsClient.getSnippet(snippetId).getBody();
-
     permissionService.shareWithUser(userId, friendId, snippetId);
+
+    SnippetResponse snippetResponse = permissionService.getSnippetById(snippetId);
+
     return ResponseEntity.ok(snippetResponse);
   }
 

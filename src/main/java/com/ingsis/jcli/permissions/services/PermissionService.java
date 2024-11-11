@@ -1,17 +1,21 @@
 package com.ingsis.jcli.permissions.services;
 
+import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.common.PermissionType;
 import com.ingsis.jcli.permissions.common.exceptions.DeniedAction;
 import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
+import com.ingsis.jcli.permissions.common.responses.SnippetResponse;
 import com.ingsis.jcli.permissions.models.SnippetPermission;
 import com.ingsis.jcli.permissions.models.User;
 import com.ingsis.jcli.permissions.repository.PermissionRepository;
 import com.ingsis.jcli.permissions.repository.UserRepository;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +24,18 @@ public class PermissionService {
 
   private final UserService userService;
   private final UserRepository userRepository;
-  private PermissionRepository snippetPermissionRepository;
+  private final PermissionRepository snippetPermissionRepository;
+  private final SnippetsClient snippetsClient;
 
   @Autowired
   public PermissionService(
       UserService userService,
       UserRepository userRepository,
-      PermissionRepository snippetPermissionRepository) {
+      PermissionRepository snippetPermissionRepository, SnippetsClient snippetsClient) {
     this.userService = userService;
     this.userRepository = userRepository;
     this.snippetPermissionRepository = snippetPermissionRepository;
+    this.snippetsClient = snippetsClient;
   }
 
   public Optional<SnippetPermission> getUserPermissionOnSnippet(Long snippetId, User user) {
@@ -97,6 +103,14 @@ public class PermissionService {
         .filter(sp -> sp.getPermissions().contains(PermissionType.SHARED))
         .map(SnippetPermission::getSnippetId)
         .collect(Collectors.toList());
+  }
+
+  public SnippetResponse getSnippetById(Long snippetId) {
+    try {
+      return snippetsClient.getSnippet(snippetId).getBody();
+    } catch (Exception e) {
+      throw new NoSuchElementException(e);
+    }
   }
 
   @Transactional
