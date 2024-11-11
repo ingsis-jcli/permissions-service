@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,8 @@ public class PermissionService {
   public PermissionService(
       UserService userService,
       UserRepository userRepository,
-      PermissionRepository snippetPermissionRepository, SnippetsClient snippetsClient) {
+      PermissionRepository snippetPermissionRepository,
+      SnippetsClient snippetsClient) {
     this.userService = userService;
     this.userRepository = userRepository;
     this.snippetPermissionRepository = snippetPermissionRepository;

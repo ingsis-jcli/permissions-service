@@ -24,8 +24,7 @@ public class PermissionController {
   private final JwtService jwtService;
 
   @Autowired
-  public PermissionController(
-      PermissionService permissionService, JwtService jwtService) {
+  public PermissionController(PermissionService permissionService, JwtService jwtService) {
     this.permissionService = permissionService;
     this.jwtService = jwtService;
   }

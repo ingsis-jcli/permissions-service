@@ -43,7 +43,6 @@ class PermissionControllerTest {
   @MockBean private SnippetsClient snippetsClient;
 
   @MockBean private JwtDecoder jwtDecoder;
-
   @MockBean private JwtService jwtService;
 
   @Autowired private ObjectMapper objectMapper;
@@ -133,7 +132,7 @@ class PermissionControllerTest {
             userId);
 
     when(jwtService.extractUserId(token)).thenReturn(userId);
-    when(snippetsClient.getSnippet(snippetId)).thenReturn(ResponseEntity.ok(snippetResponse));
+    when(permissionService.getSnippetById(snippetId)).thenReturn(snippetResponse);
 
     mockMvc
         .perform(
