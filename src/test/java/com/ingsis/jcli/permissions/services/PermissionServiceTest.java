@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.ingsis.jcli.permissions.common.PermissionType;
 import com.ingsis.jcli.permissions.common.exceptions.PermissionDeniedException;
 import com.ingsis.jcli.permissions.models.User;
+import com.ingsis.jcli.permissions.repository.PermissionRepository;
 import com.ingsis.jcli.permissions.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ class PermissionServiceTest {
   @Mock private UserService userService;
 
   @Mock private UserRepository userRepository;
+
+  @Mock private PermissionRepository snippetPermissionRepository;
 
   @InjectMocks private PermissionService permissionService;
 
@@ -135,5 +138,14 @@ class PermissionServiceTest {
     assertEquals(2, sharedSnippets.size());
     assertTrue(sharedSnippets.contains(snippetId));
     assertTrue(sharedSnippets.contains(snippetId2));
+  }
+
+  @Test
+  void testDeletePermissionsBySnippetId() {
+    Long snippetId = 1L;
+
+    permissionService.deletePermissionsBySnippetId(snippetId);
+
+    verify(snippetPermissionRepository).deleteBySnippetId(snippetId);
   }
 }

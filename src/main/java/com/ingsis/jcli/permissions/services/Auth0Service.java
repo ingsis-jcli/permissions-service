@@ -37,7 +37,7 @@ public class Auth0Service {
             .filter(user -> !user.getId().equals(requestingUserId))
             .filter(
                 user ->
-                    name.map(n -> user.getEmail().toLowerCase().contains(n.toLowerCase()))
+                    name.map(n -> user.getEmail().toLowerCase().startsWith(n.toLowerCase()))
                         .orElse(true))
             .collect(Collectors.toList());
 

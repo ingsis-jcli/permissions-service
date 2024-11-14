@@ -1,8 +1,8 @@
-name: "Continuous Integration for Dev"
+name: "CI/CD for Prod"
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build:
@@ -46,22 +46,18 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/ingsis-jcli/permissions-dev:latest
+            ghcr.io/ingsis-jcli/permissions:latest
 
-  deploy_dev:
-    name: Deploy Docker Image to Dev VM
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Update service on Dev VM with new image
+      - name: Update service on Prod VM with new image
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VM_HOST_DEV }}
+          host: ${{ secrets.VM_HOST_PROD }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_DEV_KEY }}
+          key: ${{ secrets.VM_PROD_KEY }}
           script: |
             pwd
             cd infra
-            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io 
-            sudo docker-compose -f docker-compose.dev.yml pull permissions
-            sudo docker-compose -f docker-compose.dev.yml up -d permissions
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
+            sudo docker-compose -f docker-compose.prod.yml pull permissions
+            sudo docker-compose -f docker-compose.prod.yml up -d permissions

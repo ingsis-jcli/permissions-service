@@ -1,6 +1,5 @@
 package com.ingsis.jcli.permissions.controllers;
 
-import com.ingsis.jcli.permissions.clients.SnippetsClient;
 import com.ingsis.jcli.permissions.common.PermissionType;
 import com.ingsis.jcli.permissions.common.responses.SnippetResponse;
 import com.ingsis.jcli.permissions.services.JwtService;
@@ -8,7 +7,9 @@ import com.ingsis.jcli.permissions.services.PermissionService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,11 @@ public class PermissionController {
 
   private final PermissionService permissionService;
   private final JwtService jwtService;
-  private final SnippetsClient snippetsClient;
 
   @Autowired
-  public PermissionController(
-      PermissionService permissionService, JwtService jwtService, SnippetsClient snippetsClient) {
+  public PermissionController(PermissionService permissionService, JwtService jwtService) {
     this.permissionService = permissionService;
     this.jwtService = jwtService;
-    this.snippetsClient = snippetsClient;
   }
 
   @GetMapping()
@@ -55,9 +53,10 @@ public class PermissionController {
 
     String userId = jwtService.extractUserId(token);
 
-    SnippetResponse snippetResponse = snippetsClient.getSnippet(snippetId).getBody();
-
     permissionService.shareWithUser(userId, friendId, snippetId);
+
+    SnippetResponse snippetResponse = permissionService.getSnippetById(snippetId);
+
     return ResponseEntity.ok(snippetResponse);
   }
 
@@ -81,5 +80,14 @@ public class PermissionController {
   @GetMapping("/alert")
   public void newRelicAlert(@RequestHeader("Authorization") String token) {
     throw new RuntimeException("This is an exception");
+  }
+
+  @DeleteMapping("/snippet/{snippetId}")
+  public ResponseEntity<Void> deletePermissionsBySnippetId(
+      @PathVariable Long snippetId, @RequestHeader("Authorization") String token) {
+
+    permissionService.deletePermissionsBySnippetId(snippetId);
+
+    return ResponseEntity.noContent().build();
   }
 }
